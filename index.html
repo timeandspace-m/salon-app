@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>サロン通知設定</title>
+</head>
+<body>
+  <h2>プッシュ通知の登録</h2>
+  <p>以下のボタンを押して、通知を許可してください。</p>
+  
+  <button id="subscribe-btn" style="padding: 10px 20px; font-size: 16px;">
+    通知を受け取る
+  </button>
+
+  <div style="margin-top: 20px;">
+    <p>【あなたのシステム専用宛先（デバイストークン）】</p>
+    <textarea id="token-display" rows="4" cols="40" readonly placeholder="ここにトークンが表示されます"></textarea>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
