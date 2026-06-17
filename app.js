@@ -28,7 +28,7 @@ document.getElementById('notification-type').addEventListener('change', async (e
         
         // 2. 鍵ペア（あなたのご自身のものに書き換えてください）
         const currentToken = await getToken(messaging, {
-          vapidKey: "あなたのVAPIDキー",
+          vapidKey: "BG3cg9dJimlrq6ij_l5uBqcvu4ky2nEaj4oL7uEJCeI58n2jeSIYi3uDEJEVk54AyWfk1_v5mewx56nMBxgHWpQ",
           serviceWorkerRegistration: registration
         });
 
