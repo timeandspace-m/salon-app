@@ -63,7 +63,7 @@ document.getElementById('registration-form').addEventListener('submit', async (e
     name: document.getElementById('customer-name').value,
     kana: document.getElementById('customer-kana').value,
     email: document.getElementById('customer-email').value,
-    id: document.getElementById('customer-id').value,
+    id: "",
     type: document.getElementById('notification-type').value,
     token: document.getElementById('token-storage').value
   };
