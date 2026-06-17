@@ -1,6 +1,11 @@
 importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js');
 
+// 💡 【追加】古い受信機を強制的に破棄して、新しい仕組みへ一瞬で切り替える魔法のコード
+self.addEventListener('install', (event) => {
+  self.skipWaiting();
+});
+
 // 1. Firebaseの設定（app.js と同じ firebaseConfig を貼り付けます）
 const firebaseConfig = {
   apiKey: "AIzaSyCad1tGfQGD2Q2i_8LQkUsIH3GMKFA_7x0",
@@ -18,11 +23,7 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
   console.log('[Service Worker] バックグラウンドで通知を受信しました', payload);
   
-  const notificationTitle = payload.notification.title;
-  const notificationOptions = {
-    body: payload.notification.body,
-    icon: '/icon.png' // アイコンがあれば設定可能（今はそのままでOK）
-  };
-
-  return self.registration.showNotification(notificationTitle, notificationOptions);
+  // ★重要★ 
+  // ここに書かれていた「return self.registration.showNotification(...)」の数行を削除しました。
+  // これにより、Firebaseの自動通知機能だけが働くようになり、2重送信を100%防止します。
 });
