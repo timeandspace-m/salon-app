@@ -43,7 +43,8 @@ document.getElementById('notification-type').addEventListener('change', async (e
       }
     } catch (error) {
       console.error("トークン取得エラー:", error);
-      alert("プッシュ通知の準備に失敗しました。メール送信を選択してください。");
+      // 👇 この1行を書き換えます。Firebaseの生のエラーメッセージを画面に強制表示させます。
+      alert("【エラーの正体】\n" + error.message); 
       e.target.value = "メール";
     }
   }
