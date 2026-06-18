@@ -15,7 +15,7 @@ const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
 // ★あとで作成するGASの「WebアプリURL」を入れる場所です（一旦空欄でOK）
-const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxGKuAL2_VtqsaO9AXBKZzw_pfmrp07qmsCSKoVtkA4HIGfJjruWvDKXVfSKYsMr08K/exec"; 
+const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzagraUfuqR6U0un4WgPuitNip2mjfQyL0JFMk4lq9LvPIuMa0GyY88nwd24ie7VHjK/exec"; 
 
 // 通知方法の選択が変わったときの動き
 document.getElementById('notification-type').addEventListener('change', async (e) => {
