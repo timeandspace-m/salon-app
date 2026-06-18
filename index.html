@@ -122,29 +122,32 @@ button:hover {
 </head>
 <body>
 
-  <div class="container">
+<div class="container">
 
     <h1>tiMe and space<br>案内システム登録</h1>
     <p class="note">必要事項を入力し、「登録する」ボタンを押してください。</p>
 
     <div class="form-group">
       <label>お名前（フルネーム）</label>
-      <input type="text" id="name">
+      <input type="text" id="customer-name">
     </div>
 
     <div class="form-group">
       <label>フリガナ</label>
-      <input type="text" id="kana">
+      <input type="text" id="customer-kana">
     </div>
 
     <div class="form-group">
       <label>メールアドレス</label>
-      <input type="email" id="email" placeholder="example@mail.com">
+      <input type="email" id="customer-email" placeholder="example@mail.com">
     </div>
+
+    <input type="hidden" id="token-storage">
 
     <button id="registerBtn">登録する</button>
 
   </div>
+
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js"></script>
   <script src="app.js"></script>
