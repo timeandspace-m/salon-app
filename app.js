@@ -58,13 +58,13 @@ document.getElementById('registration-form').addEventListener('submit', async (e
   submitBtn.disabled = true;
   submitBtn.innerText = "登録中...";
 
-  // 画面に入力された文字をかき集める
+// 画面に入力された文字をかき集める
   const formData = {
     name: document.getElementById('customer-name').value,
     kana: document.getElementById('customer-kana').value,
     email: document.getElementById('customer-email').value,
     id: "",
-    type: document.getElementById('notification-type').value,
+    type: "プッシュ通知", // ★ここを書き換えます！（document.getElementById... を消す）
     token: document.getElementById('token-storage').value
   };
 
