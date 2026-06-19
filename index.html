@@ -3,18 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>サロン通知設定</title>
+  <title>tiMe and space</title>
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap');
 
 :root {
   /* tiMe and space カラーパレット */
-  --bg-color: #a7b6a2;       /* 優しいアイボリー（背景） */
+  --bg-color: #a7b6a2;       /* ホームページに合わせたセージグリーン（背景） */
   --text-color: #2e2d2c;     /* 温かみのあるダークブラウン（文字色） */
   --border-color: #DCD4C9;   /* 薄いベージュ（枠線） */
   --btn-color: #8C7A6B;      /* 落ち着いたモカブラウン（ボタン色） */
   --btn-hover: #756558;      /* ボタンを押した時の色 */
-  --accent-color: #7B8D75;   /* セージグリーン（チェックマークなど） */
 }
 
 * {
@@ -29,8 +28,8 @@ body {
   padding: 0;
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* ⭕️ まず「一番上」に寄せます */
-  padding-top: 10vh;       /* ⭕️ その後、上から少し（画面の10%分）隙間を空けます */
+  align-items: flex-start; /* 上寄せ */
+  padding-top: 10vh;       /* 上部にほどよい背景が見える隙間 */
   min-height: 100vh;
 }
 
@@ -38,7 +37,7 @@ body {
   background-color: #ffffff;
   padding: 40px 30px;
   border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* うっすらとした上品な影 */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   width: 90%;
   max-width: 400px;
 }
@@ -66,25 +65,22 @@ label {
   font-weight: 500;
 }
 
-/* ★超重要：iPhoneズーム対策 ＆ やわらかい入力枠★ */
+/* iPhoneズーム対策 ＆ やわらかい入力枠 */
 input[type="text"],
-input[type="email"],
-select {
+input[type="email"] {
   width: 100%;
   padding: 12px 15px;
-  font-size: 16px; /* ←iPhoneでズームさせない魔法の数字！ */
+  font-size: 16px; /* iPhoneでズームさせない16px */
   font-family: 'Noto Sans JP', sans-serif;
   border: 1px solid var(--border-color);
-  border-radius: 8px; /* 少し丸みを持たせる */
+  border-radius: 8px;
   background-color: #FAF9F8;
   color: var(--text-color);
   transition: all 0.3s ease;
-  appearance: none; /* スマホ特有のデザインをリセット */
+  appearance: none;
 }
 
-/* 入力中に枠線の色を少し濃くする */
-input:focus,
-select:focus {
+input:focus {
   outline: none;
   border-color: var(--btn-color);
   background-color: #ffffff;
@@ -100,7 +96,7 @@ button {
   color: #fff;
   background-color: var(--btn-color);
   border: none;
-  border-radius: 25px; /* リラックス感のある丸いボタン */
+  border-radius: 25px;
   cursor: pointer;
   margin-top: 10px;
   transition: background-color 0.3s ease;
@@ -122,7 +118,7 @@ button:hover {
 </head>
 <body>
 
-<div class="container">
+  <div class="container">
 
     <h1>tiMe and space<br>案内システム登録</h1>
     <p class="note">必要事項を入力し、「登録する」ボタンを押してください。</p>
@@ -139,7 +135,7 @@ button:hover {
 
     <div class="form-group">
       <label>メールアドレス</label>
-      <input type="email" id="customer-email" placeholder="example@mail.com">
+      <input type="email" id="customer-email">
     </div>
 
     <input type="hidden" id="token-storage">
