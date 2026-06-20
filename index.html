@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>tiMe and space</title>
+  <title>サロン通知設定</title>
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap');
 
 :root {
   /* tiMe and space カラーパレット */
-  --bg-color: #a7b6a2;       /* ホームページに合わせたセージグリーン（背景） */
-  --text-color: #2e2d2c;     /* 温かみのあるダークブラウン（文字色） */
-  --border-color: #DCD4C9;   /* 薄いベージュ（枠線） */
-  --btn-color: #8C7A6B;      /* 落ち着いたモカブラウン（ボタン色） */
-  --btn-hover: #756558;      /* ボタンを押した時の色 */
+  --bg-color: #a7b6a2;       /* 背景 */
+  --text-color: #2e2d2c;     /* 文字色 */
+  --border-color: #DCD4C9;   /* 枠線 */
+  --btn-color: #8C7A6B;      /* ボタン色 */
+  --btn-hover: #756558;
 }
 
 * {
@@ -28,8 +28,8 @@ body {
   padding: 0;
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* 上寄せ */
-  padding-top: 10vh;       /* 上部にほどよい背景が見える隙間 */
+  align-items: flex-start;
+  padding-top: 10vh; /* 上寄せ・背景が見える隙間 */
   min-height: 100vh;
 }
 
@@ -42,7 +42,6 @@ body {
   max-width: 400px;
 }
 
-/* タイトル部分 */
 h1 {
   font-family: 'Josefin Sans', 'Noto Sans JP', sans-serif;
   text-align: center;
@@ -53,7 +52,6 @@ h1 {
   letter-spacing: 1px;
 }
 
-/* 入力グループの余白 */
 .form-group {
   margin-bottom: 20px;
 }
@@ -65,12 +63,11 @@ label {
   font-weight: 500;
 }
 
-/* iPhoneズーム対策 ＆ やわらかい入力枠 */
 input[type="text"],
 input[type="email"] {
   width: 100%;
   padding: 12px 15px;
-  font-size: 16px; /* iPhoneでズームさせない16px */
+  font-size: 16px; /* iPhoneズーム対策 */
   font-family: 'Noto Sans JP', sans-serif;
   border: 1px solid var(--border-color);
   border-radius: 8px;
@@ -86,7 +83,6 @@ input:focus {
   background-color: #ffffff;
 }
 
-/* 登録ボタン */
 button {
   width: 100%;
   padding: 15px;
@@ -106,7 +102,11 @@ button:hover {
   background-color: var(--btn-hover);
 }
 
-/* 注意書きなどの小さい文字 */
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
 .note {
   font-size: 12px;
   color: #888;
@@ -119,34 +119,30 @@ button:hover {
 <body>
 
   <div class="container">
-
     <h1>tiMe and space<br>案内システム登録</h1>
     <p class="note">必要事項を入力し、「登録する」ボタンを押してください。</p>
 
-    <div class="form-group">
-      <label>お名前（フルネーム）</label>
-      <input type="text" id="customer-name">
-    </div>
+    <form id="registration-form">
+      <div class="form-group">
+        <label>お名前（フルネーム）</label>
+        <input type="text" id="customer-name" required>
+      </div>
 
-    <div class="form-group">
-      <label>フリガナ</label>
-      <input type="text" id="customer-kana">
-    </div>
+      <div class="form-group">
+        <label>フリガナ</label>
+        <input type="text" id="customer-kana" required>
+      </div>
 
-    <div class="form-group">
-      <label>メールアドレス</label>
-      <input type="email" id="customer-email">
-    </div>
+      <div class="form-group">
+        <label>メールアドレス</label>
+        <input type="email" id="customer-email" required>
+      </div>
 
-    <input type="hidden" id="token-storage">
-
-    <button id="registerBtn">登録する</button>
-
+      <button type="submit" id="submit-btn">登録する</button>
+    </form>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js"></script>
-  <script src="app.js"></script>
+  <script type="module" src="app.js"></script>
 
 </body>
 </html>
