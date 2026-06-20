@@ -49,9 +49,33 @@ h1 {
   text-align: center;
   font-size: 22px;
   font-weight: 500;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   color: var(--text-color);
   letter-spacing: 1px;
+}
+
+/* 追加：案内文の枠デザイン */
+.info-text {
+  background-color: #FAF9F8;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 15px;
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 25px;
+  color: var(--text-color);
+}
+
+.info-text .highlight {
+  font-weight: 500;
+  color: var(--btn-color);
+}
+
+.info-text .small-text {
+  font-size: 11px;
+  color: #888;
+  display: block;
+  margin-top: 5px;
 }
 
 .form-group {
@@ -110,19 +134,28 @@ button:disabled {
 }
 
 .note {
-  font-size: 12px;
-  color: #888;
+  font-size: 13px;
+  color: var(--text-color);
   text-align: center;
-  margin-top: 15px;
-  line-height: 1.5;
+  margin-bottom: 15px;
+  font-weight: 500;
 }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h1>tiMe and space<br>案内システム登録</h1>
-    <p class="note">必要事項を入力し、「登録する」ボタンを押してください。</p>
+    <h1>tiMe and space<br>ご予約リマインダー</h1>
+    <p class="note">ご予約日の前日と当日に、確認のお知らせをお届けします。</p>
+
+    <div class="info-text">
+      ご予約の確認通知は、以下の時間帯に<strong>「プッシュ通知」</strong>にてお届けいたします。<br><br>
+      <span class="highlight">■ ご予約前日： 19:00 〜 20:00 の間</span><br>
+      <span class="highlight">■ ご予約当日： 7:00 〜 8:00 の間</span><br><br>
+      ご登録後、まずはご入力いただいたアドレス宛に「受付完了の自動返信メール」を送信いたします。メールを確実にお届けするため、アドレスはお間違いのないようご入力をお願いいたします。<br>
+      <span class="small-text">（※すぐに届かない場合は、入力間違いや迷惑メールをご確認のうえ、大変お手数ですが再度ご登録をお願いいたします。）</span><br><br>
+      万が一、前日・当日のプッシュ通知が配信されないなどの不具合がございましたら、ご来店時にどうぞお気軽にお知らせください。
+    </div>
 
     <form id="registration-form">
       <div class="form-group">
