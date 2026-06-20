@@ -1,0 +1,20 @@
+{
+  "name": "tiMe and space 予約案内",
+  "short_name": "tiMe and space",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#a7b6a2",
+  "theme_color": "#8C7A6B",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
