@@ -15,7 +15,7 @@ const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
 // ★あとで作成するGASの「WebアプリURL」を入れる場所です（一旦空欄でOK）
-const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwp_X2u6Vrn1_gehXduaIcXGjq7cVl33WXEop_oMXdLJxsNSHKoiTspMIiKclAnc1Q_/exec"; 
+const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwf1FZoh9RZrbJ6hKI6RIfIPHeUDIunY0fZGbWnru6Bch-0K1r_eX57nZwrCWUoqFRZ/exec"; 
 
 // フォームの「登録する」ボタンが押されたときの動き（プッシュ通知専用）
 document.getElementById('registration-form').addEventListener('submit', async (e) => {
