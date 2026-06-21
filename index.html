@@ -10,11 +10,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap');
 
 :root {
-  /* tiMe and space カラーパレット */
-  --bg-color: #a7b6a2;       /* 背景 */
-  --text-color: #2e2d2c;     /* 文字色 */
-  --border-color: #DCD4C9;   /* 枠線 */
-  --btn-color: #8C7A6B;      /* ボタン色 */
+  --bg-color: #a7b6a2;
+  --text-color: #2e2d2c;
+  --border-color: #DCD4C9;
+  --btn-color: #8C7A6B;
   --btn-hover: #756558;
 }
 
@@ -24,11 +23,10 @@
 
 body {
   font-family: 'Noto Sans JP', sans-serif;
-  background-color: var(--bg-color);
-  color: var(--text-color);
+  background-color: #a7b6a2; /* bg-color直接指定 */
+  color: #2e2d2c;
   margin: 0;
-  /* 修正：上下に均等なグリーンの余白を作ります */
-  padding: 6vh 0; 
+  padding: 6vh 0;
   display: flex;
   justify-content: center;
   min-height: 100vh;
@@ -41,74 +39,106 @@ body {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   width: 90%;
   max-width: 400px;
-  /* 修正：画面の中央に配置し、上下のグリーンを一緒にします */
-  margin: auto; 
+  margin: auto;
 }
 
+/* ★新機能：非表示用クラス */
+.hidden {
+  display: none !important;
+}
+
+/* 共通タイトル */
 h1 {
   font-family: 'Josefin Sans', 'Noto Sans JP', sans-serif;
   text-align: center;
   font-size: 22px;
   font-weight: 500;
   margin-bottom: 20px;
-  color: var(--text-color);
+  color: #2e2d2c;
   letter-spacing: 1px;
 }
 
+/* ======= アプリ化案内画面のデザイン ======= */
+.guide-box {
+  text-align: center;
+}
+.guide-icon {
+  font-size: 45px;
+  margin-bottom: 10px;
+}
+.guide-desc {
+  font-size: 13px;
+  color: #2e2d2c;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+.guide-step {
+  background-color: #FAF9F8;
+  border: 1px solid #DCD4C9;
+  border-radius: 8px;
+  padding: 18px 15px;
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: left;
+  margin-bottom: 15px;
+}
+.guide-step strong {
+  color: #8C7A6B;
+}
+.guide-note {
+  font-size: 11px;
+  color: #888;
+  margin-top: 20px;
+}
+
+/* ======= 登録フォーム画面のデザイン ======= */
 .info-text {
   background-color: #FAF9F8;
-  border: 1px solid var(--border-color);
+  border: 1px solid #DCD4C9;
   border-radius: 8px;
   padding: 15px;
   font-size: 13px;
   line-height: 1.6;
   margin-bottom: 25px;
-  color: var(--text-color);
+  color: #2e2d2c;
 }
-
 .info-text .highlight {
   font-weight: 500;
-  color: var(--btn-color);
+  color: #8C7A6B;
 }
-
 .info-text .small-text {
   font-size: 11px;
-  color: #555;
+  color: #888;
   display: block;
   margin-top: 5px;
 }
-
 .form-group {
   margin-bottom: 20px;
 }
-
 label {
   display: block;
   margin-bottom: 8px;
   font-size: 14px;
   font-weight: 500;
 }
-
 input[type="text"],
 input[type="email"] {
   width: 100%;
   padding: 12px 15px;
-  font-size: 16px; /* iPhoneズーム対策 */
+  font-size: 16px;
   font-family: 'Noto Sans JP', sans-serif;
-  border: 1px solid var(--border-color);
+  border: 1px solid #DCD4C9;
   border-radius: 8px;
   background-color: #FAF9F8;
-  color: var(--text-color);
+  color: #2e2d2c;
   transition: all 0.3s ease;
   appearance: none;
 }
-
 input:focus {
   outline: none;
-  border-color: var(--btn-color);
+  border-color: #8C7A6B;
   background-color: #ffffff;
 }
-
 button {
   width: 100%;
   padding: 15px;
@@ -116,26 +146,23 @@ button {
   font-weight: 500;
   letter-spacing: 2px;
   color: #fff;
-  background-color: var(--btn-color);
+  background-color: #8C7A6B;
   border: none;
   border-radius: 25px;
   cursor: pointer;
   margin-top: 10px;
   transition: background-color 0.3s ease;
 }
-
 button:hover {
-  background-color: var(--btn-hover);
+  background-color: #756558;
 }
-
 button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
-
 .note {
   font-size: 13px;
-  color: var(--text-color);
+  color: #2e2d2c;
   text-align: center;
   margin-bottom: 15px;
   font-weight: 500;
@@ -145,36 +172,58 @@ button:disabled {
 <body>
 
   <div class="container">
-    <h1>tiMe and space<br>ご予約リマインダー</h1>
-    <p class="note">ご予約日の前日と当日に、<br>確認のお知らせをお届けします。</p>
+    
+    <div id="install-guide" class="hidden">
+      <div class="guide-box">
+        <div class="guide-icon">📱</div>
+        <h1>tiMe and space<br>ご予約リマインダー</h1>
+        <p class="guide-desc">こちらはアプリ専用のシステムです。<br>確実にお知らせをお届けするため、<br>ホーム画面に追加してご利用ください。</p>
 
-    <div class="info-text">
-      ご予約の確認通知は、以下の時間帯に<strong>「プッシュ通知」</strong>にてお届けいたします。<br><br>
-      <span class="highlight">■ ご予約前日： 19:00 〜 20:00 の間</span><br>
-      <span class="highlight">■ ご予約当日： 7:00 〜 8:00 の間</span><br><br>
-      ご登録後、まずはご入力いただいたアドレス宛に「受付完了の自動返信メール」を送信いたします。メールを確実にお届けするため、アドレスはお間違いのないようご入力をお願いいたします。<br>
-      <span class="small-text">（※すぐに届かない場合は、入力間違いや迷惑メールをご確認のうえ、大変お手数ですが再度ご登録をお願いいたします。）</span><br><br>
-      万が一、前日・当日のプッシュ通知が配信されないなどの不具合がございましたら、ご来店時にどうぞお気軽にお知らせください。
+        <div id="ios-guide" class="guide-step hidden">
+          【iPhoneをご利用の方】<br><br>
+          画面下部の <strong>共有ボタン [ ↑ ]</strong> をタップし、一覧から <strong>「ホーム画面に追加」</strong> を選択してください。
+        </div>
+
+        <div id="android-guide" class="guide-step hidden">
+          【Androidをご利用の方】<br><br>
+          画面右上の <strong>メニュー [ ⋮ ]</strong> をタップし、一覧から <strong>「ホーム画面に追加」</strong> を選択してください。
+        </div>
+
+        <p class="guide-note">※追加後、ホーム画面にできた新しいアイコンから開くと、登録画面が表示されます。</p>
+      </div>
     </div>
 
-    <form id="registration-form">
-      <div class="form-group">
-        <label>お名前（フルネーム）</label>
-        <input type="text" id="customer-name" required>
+
+    <div id="app-content" class="hidden">
+      <h1>tiMe and space<br>ご予約リマインダー</h1>
+      <p class="note">ご予約日の前日と当日に、確認のお知らせをお届けします。</p>
+
+      <div class="info-text">
+        ご予約の確認通知は、以下の時間帯に<strong>「プッシュ通知」</strong>にてお届けいたします。<br><br>
+        <span class="highlight">■ ご予約前日： 19:00 〜 20:00 の間</span><br>
+        <span class="highlight">■ ご予約当日： 7:00 〜 8:00 の間</span><br><br>
+        ご登録後、まずはご入力いただいたアドレス宛に「受付完了の自動返信メール」を送信いたします。メールを確実にお届けするため、アドレスはお間違いのないようご入力をお願いいたします。<br>
+        <span class="small-text">（※すぐに届かない場合は、入力間違いや迷惑メールをご確認のうえ、大変お手数ですが再度ご登録をお願いいたします。）</span><br><br>
+        万が一、前日・当日のプッシュ通知が配信されないなどの不具合がございましたら、ご来店時にどうぞお気軽にお知らせください。
       </div>
 
-      <div class="form-group">
-        <label>フリガナ</label>
-        <input type="text" id="customer-kana" required>
-      </div>
+      <form id="registration-form">
+        <div class="form-group">
+          <label>お名前（フルネーム）</label>
+          <input type="text" id="customer-name" required>
+        </div>
+        <div class="form-group">
+          <label>フリガナ</label>
+          <input type="text" id="customer-kana" required>
+        </div>
+        <div class="form-group">
+          <label>メールアドレス</label>
+          <input type="email" id="customer-email" required>
+        </div>
+        <button type="submit" id="submit-btn">登録する</button>
+      </form>
+    </div>
 
-      <div class="form-group">
-        <label>メールアドレス</label>
-        <input type="email" id="customer-email" required>
-      </div>
-
-      <button type="submit" id="submit-btn">登録する</button>
-    </form>
   </div>
 
   <script type="module" src="app.js"></script>

@@ -14,76 +14,99 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
-// ★あとで作成するGASの「WebアプリURL」を入れる場所です（一旦空欄でOK）
-const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwf1FZoh9RZrbJ6hKI6RIfIPHeUDIunY0fZGbWnru6Bch-0K1r_eX57nZwrCWUoqFRZ/exec"; 
-
-// フォームの「登録する」ボタンが押されたときの動き（プッシュ通知専用）
-document.getElementById('registration-form').addEventListener('submit', async (e) => {
-  e.preventDefault(); // 画面の勝手なリロードを防ぐ
+// ==========================================
+// 2. 表示の出し分けセンサー（起動時に自動チェック）
+// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+  // アプリ（ホーム画面）から開いているかチェック
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
   
-  const submitBtn = document.getElementById('submit-btn');
-  submitBtn.disabled = true;
-  submitBtn.innerText = "登録中...";
-
-  try {
-    // 【1】まずプッシュ通知の許可を取り、スマホの住所（トークン）を取得する
-    const permission = await Notification.requestPermission();
-    if (permission !== 'granted') {
-      alert("通知がブロックされています。ブラウザの設定で通知を許可してください。");
-      submitBtn.disabled = false;
-      submitBtn.innerText = "登録する";
-      return;
-    }
-
-    const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
-    const currentToken = await getToken(messaging, {
-      vapidKey: "BG3cg9dJimlrq6ij_l5uBqcvu4ky2nEaj4oL7uEJCeI58n2jeSIYi3uDEJEVk54AyWfk1_v5mewx56nMBxgHWpQ", // ※ご自身のVAPIDキーのままでOKです
-      serviceWorkerRegistration: registration
-    });
-
-    if (!currentToken) {
-      alert("プッシュ通知の宛先データが取得できませんでした。");
-      submitBtn.disabled = false;
-      submitBtn.innerText = "登録する";
-      return;
-    }
-
-    // 【2】画面に入力された文字をかき集める
-    const formData = {
-      name: document.getElementById('customer-name').value,
-      kana: document.getElementById('customer-kana').value,
-      email: document.getElementById('customer-email').value,
-      id: "",
-      type: "プッシュ通知", // 完全に「プッシュ通知」で固定
-      token: currentToken   // 取得したばかりのトークンを直接セット
-    };
-
-    // 【3】GAS（スプレッドシート）へデータを送信します
-    if (!GAS_WEB_APP_URL || GAS_WEB_APP_URL === "h/exec") {
-      console.log("送信データ:", formData);
-      alert("【テスト動作】データを集めました！GASのURLを設定するとスプレッドシートに保存されます。\nお名前: " + formData.name);
-      submitBtn.disabled = false;
-      submitBtn.innerText = "登録する";
-      return;
-    }
-
-    const response = await fetch(GAS_WEB_APP_URL, {
-      method: "POST",
-      body: JSON.stringify(formData)
-    });
+  if (isStandalone) {
+    // 【アプリの場合】登録フォームを表示
+    document.getElementById('app-content').classList.remove('hidden');
+  } else {
+    // 【ブラウザの場合】インストール案内を表示
+    document.getElementById('install-guide').classList.remove('hidden');
     
-    if (response.ok) {
-      alert("ご登録が完了しました！「受付完了の自動返信メール」をご確認ください。");
-      document.getElementById('registration-form').reset();
+    // スマホのOS（iPhoneかAndroidか）をチェックして案内文を切り替え
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+      document.getElementById('ios-guide').classList.remove('hidden'); // iPhone用を出す
+    } else if (/android/i.test(userAgent)) {
+      document.getElementById('android-guide').classList.remove('hidden'); // Android用を出す
     } else {
-      throw new Error("サーバーエラー");
+      // PCなどの場合は両方出しておく
+      document.getElementById('ios-guide').classList.remove('hidden');
+      document.getElementById('android-guide').classList.remove('hidden');
     }
-
-  } catch (error) {
-    console.error("送信エラー:", error);
-    alert("登録送信中にエラーが発生しました。\nこのサイトからは登録できません。\nアプリから登録しなおしてください。 " + error.message);
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.innerText = "登録する";
   }
 });
+
+
+// ==========================================
+// 3. 登録ボタンが押された時の処理（変更なし）
+// ==========================================
+const form = document.getElementById('registration-form');
+if (form) {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault(); 
+    
+    const submitBtn = document.getElementById('submit-btn');
+    submitBtn.disabled = true;
+    submitBtn.innerText = "登録中...";
+
+    try {
+      // プッシュ通知の許可とトークン取得
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') {
+        alert("通知がブロックされています。スマホの設定で通知を許可してください。");
+        submitBtn.disabled = false;
+        submitBtn.innerText = "登録する";
+        return;
+      }
+
+      const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+      const currentToken = await getToken(messaging, {
+        vapidKey: "BG3cg9dJimlrq6ij_l5uBqcvu4ky2nEaj4oL7uEJCeI58n2jeSIYi3uDEJEVk54AyWfk1_v5mewx56nMBxgHWpQ", // ※ご自身のVAPIDキー
+        serviceWorkerRegistration: registration
+      });
+
+      if (!currentToken) {
+        alert("プッシュ通知の宛先データが取得できませんでした。");
+        submitBtn.disabled = false;
+        submitBtn.innerText = "登録する";
+        return;
+      }
+
+      // 入力データの収集
+      const formData = {
+        name: document.getElementById('customer-name').value,
+        kana: document.getElementById('customer-kana').value,
+        email: document.getElementById('customer-email').value,
+        id: "",
+        type: "プッシュ通知",
+        token: currentToken
+      };
+
+      // GASへ送信
+      const response = await fetch(GAS_WEB_APP_URL, {
+        method: "POST",
+        body: JSON.stringify(formData)
+      });
+      
+      if (response.ok) {
+        alert("ご登録が完了しました！案内リマインダーを楽しみにお待ちください。");
+        document.getElementById('registration-form').reset();
+      } else {
+        throw new Error("サーバーエラー");
+      }
+
+    } catch (error) {
+      console.error("送信エラー:", error);
+      alert("登録送信中にエラーが発生しました。\n詳細: " + error.message);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerText = "登録する";
+    }
+  });
+}
