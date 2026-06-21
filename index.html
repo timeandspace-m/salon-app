@@ -91,6 +91,15 @@ h1 {
   margin-top: 20px;
 }
 
+/* ★追加：文中に綺麗にアイコンを並べるための設定 */
+.inline-icon {
+  width: 1.2em;
+  height: 1.2em;
+  vertical-align: -0.2em;
+  margin: 0 2px;
+  stroke: var(--btn-color);
+}
+
 /* ======= 登録フォーム画面のデザイン ======= */
 .info-text {
   background-color: #FAF9F8;
@@ -181,13 +190,13 @@ button:disabled {
 
         <div id="ios-guide" class="guide-step hidden">
           【iPhoneをご利用の方】<br><br>
-          画面の <strong>共有ボタン [ ↑ ]</strong> 、またはアドレスバー付近の <strong>メニューボタン（ [ ⋯ ] など ）</strong> をタップし、<br>
+          画面の <strong>共有ボタン <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></strong> 、またはアドレスバー付近の <strong>メニューボタン（ <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle></svg> など ）</strong> をタップし、<br>
           一覧から <strong>「ホーム画面に追加」</strong> を選択してください。
         </div>
 
         <div id="android-guide" class="guide-step hidden">
           【Androidをご利用の方】<br><br>
-          アドレスバー付近の <strong>メニューボタン（ [ ⋮ ] や [ ⋯ ] など ）</strong> をタップし、<br>
+          アドレスバー付近の <strong>メニューボタン（ <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="12" cy="19" r="1.5"></circle></svg> や <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle></svg> など ）</strong> をタップし、<br>
           一覧から <strong>「ホーム画面に追加」</strong> または <strong>「アプリをインストール」</strong> を選択してください。
         </div>
 
