@@ -13,7 +13,7 @@ export const APP_CONFIG = {
   },
   
   // 2. プッシュ通知用のVAPIDキー
-  VAPID_KEY: "ここにVAPIDキー",
+  VAPID_KEY: "BG3cg9dJimlrq6ij_l5uBqcvu4ky2nEaj4oL7uEJCeI58n2jeSIYi3uDEJEVk54AyWfk1_v5mewx56nMBxgHWpQ",
 
   // 3. GASのWebアプリURL
   GAS_WEB_APP_URL: "https://script.google.com/macros/s/AKfycbwen9TZTJW0tyGdzwDl4BOMDeql6ES93kd5fBYV-fzW_GkxOY-0wLU2acrnvwkSA9MF/exec"
