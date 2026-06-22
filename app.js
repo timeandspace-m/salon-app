@@ -62,6 +62,7 @@ if (form) {
       }
 
       const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+      await navigator.serviceWorker.ready;
       const currentToken = await getToken(messaging, {
         vapidKey: APP_CONFIG.VAPID_KEY,
         serviceWorkerRegistration: registration
