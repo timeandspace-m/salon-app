@@ -1,18 +1,14 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
+import { APP_CONFIG } from "./config.js";
 
-// 1. Firebaseの設定（メモした firebaseConfig を貼り付けます）
-const firebaseConfig = {
-  apiKey: "AIzaSyCad1tGfQGD2Q2i_8LQkUsIH3GMKFA_7x0",
-  authDomain: "webpush-tas.firebaseapp.com",
-  projectId: "webpush-tas",
-  storageBucket: "webpush-tas.firebasestorage.app",
-  messagingSenderId: "281608025229",
-  appId: "1:281608025229:web:0918eec5a3e9b9bb4a9ec4"
-};
 
-const app = initializeApp(firebaseConfig);
+// ==========================================
+// 1. FirebaseとGASの設定（秘密の情報は消えました！）
+// ==========================================
+const app = initializeApp(APP_CONFIG.FIREBASE_CONFIG);
 const messaging = getMessaging(app);
+const GAS_WEB_APP_URL = APP_CONFIG.GAS_WEB_APP_URL;
 
 // ==========================================
 // 2. 表示の出し分けセンサー（起動時に自動チェック）
@@ -67,7 +63,7 @@ if (form) {
 
       const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
       const currentToken = await getToken(messaging, {
-        vapidKey: "BG3cg9dJimlrq6ij_l5uBqcvu4ky2nEaj4oL7uEJCeI58n2jeSIYi3uDEJEVk54AyWfk1_v5mewx56nMBxgHWpQ", // ※ご自身のVAPIDキー
+        vapidKey: APP_CONFIG.VAPID_KEY,
         serviceWorkerRegistration: registration
       });
 
@@ -95,7 +91,7 @@ if (form) {
       });
       
       if (response.ok) {
-        alert("ご登録が完了しました！案内リマインダーを楽しみにお待ちください。");
+        alert("ご登録が完了しました！");
         document.getElementById('registration-form').reset();
       } else {
         throw new Error("サーバーエラー");
