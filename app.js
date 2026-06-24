@@ -159,8 +159,10 @@ async function loadNextReservation() {
     // 1. Firebaseから現在のスマホのトークン（鍵）をこっそり取得
     const messaging = getMessaging();
     const registration = await navigator.serviceWorker.ready;
+    
+    // ⭕ 修正箇所：ここを「APP_CONFIG.VAPID_KEY」に直しました！
     const token = await getToken(messaging, { 
-      vapidKey: APP_CONFIG.FIREBASE_VAPID_KEY, 
+      vapidKey: APP_CONFIG.VAPID_KEY, 
       serviceWorkerRegistration: registration 
     });
 
@@ -170,7 +172,6 @@ async function loadNextReservation() {
     }
 
     // 2. GAS（予約検索係）にトークンを渡して質問する
-    // ※ 注意: config.js に書かれているGASのURL変数名が「GAS_WEB_APP_URL」以外（例: GAS_URLなど）の場合は、ここを書き換えてください。
     const gasUrl = APP_CONFIG.GAS_WEB_APP_URL + "?token=" + encodeURIComponent(token);
     
     const response = await fetch(gasUrl);
