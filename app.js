@@ -128,3 +128,24 @@ if (form) {
     }
   });
 }
+
+// 🌟【新規機能】画面下のタブを切り替える仕組み
+document.addEventListener('DOMContentLoaded', () => {
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+
+  if (tabBtns.length > 0) {
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // 1. 全てのボタンと画面から「active（選択中）」の状態を外す
+        tabBtns.forEach(b => b.classList.remove('active'));
+        tabPanels.forEach(p => p.classList.remove('active'));
+        
+        // 2. クリックされたボタンと、それに対応する画面を「active」にして表示する
+        btn.classList.add('active');
+        const targetId = btn.getAttribute('data-tab');
+        document.getElementById(targetId).classList.add('active');
+      });
+    });
+  }
+});
