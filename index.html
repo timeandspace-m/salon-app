@@ -229,20 +229,107 @@ button:disabled {
   margin-bottom: 15px;
   font-weight: 500;
 }
+
+/* ▼▼▼ ここから下が、既存のコードを壊さずに追加した「タブ・マイページ用」の新しいCSSです ▼▼▼ */
+.tab-panel {
+  display: none;
+}
+.tab-panel.active {
+  display: block;
+}
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
+  border-top: 1px solid var(--border-color);
+  z-index: 1000;
+  padding-bottom: env(safe-area-inset-bottom); /* iPhoneのホームバー避け */
+}
+/* 既存のbuttonデザインを上書きして、タブ用のスマートなボタンにする設定 */
+button.tab-btn {
+  background-color: transparent;
+  color: #a49e98;
+  width: auto;
+  padding: 5px 15px;
+  margin: 0;
+  border-radius: 0;
+  font-size: 11px;
+  letter-spacing: normal;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: color 0.3s ease;
+}
+button.tab-btn:hover {
+  background-color: transparent;
+}
+button.tab-btn.active {
+  color: var(--btn-color);
+  font-weight: bold;
+}
+.tab-icon {
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+#app-content {
+  padding-bottom: 80px; /* タブバーで下のコンテンツが隠れないように余白を追加 */
+}
+
+/* ホーム（マイページ）用の追加デザイン */
+.welcome-box {
+  text-align: center;
+  margin-bottom: 25px;
+}
+.welcome-box h2 {
+  font-weight: 500;
+  color: var(--text-color);
+  margin-bottom: 5px;
+}
+.info-card {
+  background-color: #FAF9F8;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 25px 20px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+.info-card h3 {
+  font-size: 14px;
+  color: var(--text-color);
+  margin: 0 0 15px 0;
+  font-weight: 500;
+}
+#next-reservation {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--btn-color);
+  margin: 0;
+}
+/* HP埋め込み用のデザイン */
+.hp-iframe {
+  width: 100%;
+  height: 65vh;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
   </style>
 </head>
 <body>
 
   <div class="container">
     
-    <!-- ▼▼▼ ブラウザで開いた時：アプリ化の案内 ▼▼▼ -->
     <div id="install-guide" class="hidden">
       <div class="guide-box">
         <div class="guide-icon">📱</div>
         <h1>tiMe and space<br>ご予約リマインダー</h1>
         <p class="guide-desc">こちらはアプリ専用のシステムです。<br>確実にお知らせをお届けするため、<br>ホーム画面に追加してご利用ください。</p>
 
-        <!-- iPhone用案内 -->
         <div id="ios-guide" class="guide-step hidden">
           <div class="os-title">iPhoneをご利用の方</div>
           <ol class="step-list">
@@ -252,7 +339,6 @@ button:disabled {
           </ol>
         </div>
 
-        <!-- Android用案内 -->
         <div id="android-guide" class="guide-step hidden">
           <div class="os-title">Androidをご利用の方</div>
           <ol class="step-list">
@@ -266,35 +352,69 @@ button:disabled {
     </div>
 
 
-    <!-- ▼▼▼ アプリで開いた時：いつもの登録フォーム ▼▼▼ -->
     <div id="app-content" class="hidden">
-      <h1>tiMe and space<br>ご予約リマインダー</h1>
-      <p class="note">ご予約日の前日と当日に、確認のお知らせをお届けします。</p>
-
-      <div class="info-text">
-        ご予約の確認通知は、以下の時間帯に<strong>「プッシュ通知」</strong>にてお届けいたします。<br><br>
-        <span class="highlight">■ ご予約前日： 19:00 〜 20:00 の間</span><br>
-        <span class="highlight">■ ご予約当日： 7:00 〜 8:00 の間</span><br><br>
-        ご登録後、ご入力いただいたアドレス宛に「受付完了の自動返信メール」を送信いたします。メールを確実にお届けするため、アドレスはお間違いのないようご入力をお願いいたします。<br>
-        <span class="small-text">（※すぐに届かない場合は、入力間違いや迷惑メールをご確認のうえ、お手数ですが再度ご登録をお願いいたします。）</span><br><br>
-        万が一、前日・当日のプッシュ通知が配信されないなどの不具合がございましたら、ご来店時にどうぞお気軽にお知らせください。
+      
+      <div id="tab-home" class="tab-panel active">
+        <div class="welcome-box">
+          <h2>こんにちは！</h2>
+          <p class="note">いつも tiMe and space をご利用いただき<br>ありがとうございます。</p>
+        </div>
+        
+        <div class="info-card">
+          <h3>📅 次回のご予約日時</h3>
+          <p id="next-reservation">確認中...</p>
+        </div>
       </div>
 
-      <form id="registration-form">
-        <div class="form-group">
-          <label>お名前（フルネーム）</label>
-          <input type="text" id="customer-name" required>
+      <div id="tab-hp" class="tab-panel">
+        <h2 style="text-align: center; font-size: 18px; margin-bottom: 15px;">Salon HP</h2>
+        <iframe src="https://timeandspace.sakura.ne.jp/" class="hp-iframe" title="サロンホームページ"></iframe>
+      </div>
+
+      <div id="tab-config" class="tab-panel">
+        <h1>tiMe and space<br>ご予約リマインダー</h1>
+        <p class="note">ご予約日の前日と当日に、確認のお知らせをお届けします。</p>
+
+        <div class="info-text">
+          ご予約の確認通知は、以下の時間帯に<strong>「プッシュ通知」</strong>にてお届けいたします。<br><br>
+          <span class="highlight">■ ご予約前日： 19:00 〜 20:00 の間</span><br>
+          <span class="highlight">■ ご予約当日： 7:00 〜 8:00 の間</span><br><br>
+          ご登録後、ご入力いただいたアドレス宛に「受付完了の自動返信メール」を送信いたします。メールを確実にお届けするため、アドレスはお間違いのないようご入力をお願いいたします。<br>
+          <span class="small-text">（※すぐに届かない場合は、入力間違いや迷惑メールをご確認のうえ、お手数ですが再度ご登録をお願いいたします。）</span><br><br>
+          万が一、前日・当日のプッシュ通知が配信されないなどの不具合がございましたら、ご来店時にどうぞお気軽にお知らせください。
         </div>
-        <div class="form-group">
-          <label>フリガナ</label>
-          <input type="text" id="customer-kana" required>
-        </div>
-        <div class="form-group">
-          <label>メールアドレス</label>
-          <input type="email" id="customer-email" required>
-        </div>
-        <button type="submit" id="submit-btn">登録する</button>
-      </form>
+
+        <form id="registration-form">
+          <div class="form-group">
+            <label>お名前（フルネーム）</label>
+            <input type="text" id="customer-name" required>
+          </div>
+          <div class="form-group">
+            <label>フリガナ</label>
+            <input type="text" id="customer-kana" required>
+          </div>
+          <div class="form-group">
+            <label>メールアドレス</label>
+            <input type="email" id="customer-email" required>
+          </div>
+          <button type="submit" id="submit-btn">登録する</button>
+        </form>
+      </div>
+      <nav class="tab-bar">
+        <button type="button" class="tab-btn active" data-tab="tab-home">
+          <span class="tab-icon">🏠</span>
+          <span class="tab-label">ホーム</span>
+        </button>
+        <button type="button" class="tab-btn" data-tab="tab-hp">
+          <span class="tab-icon">🌐</span>
+          <span class="tab-label">HP</span>
+        </button>
+        <button type="button" class="tab-btn" data-tab="tab-config">
+          <span class="tab-icon">⚙️</span>
+          <span class="tab-label">通知設定</span>
+        </button>
+      </nav>
+
     </div>
 
   </div>
