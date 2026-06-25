@@ -16,5 +16,5 @@ export const APP_CONFIG = {
   VAPID_KEY: "BG3cg9dJimlrq6ij_l5uBqcvu4ky2nEaj4oL7uEJCeI58n2jeSIYi3uDEJEVk54AyWfk1_v5mewx56nMBxgHWpQ",
 
   // 3. GASのWebアプリURL
-  GAS_WEB_APP_URL: "https://script.google.com/macros/s/AKfycby7rYEzuRDMaSCVchvDk8aDKWmejlPt67s06XDv6U6ieDZq2FKnrOQ2MZnfd7-GrtGC/exec"
+  GAS_WEB_APP_URL: "https://script.google.com/macros/s/AKfycbwI46bsdyeyzRo6Y9iTkzmNee_68bovwH9j4uFVuoBJd791PFgGIEXtIQ44vSOqT2Y-/exec"
 };
