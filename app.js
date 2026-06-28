@@ -1,7 +1,3 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
-import { APP_CONFIG } from "./config.js";
-
 // 🌟通知タップで起動した際、メッセージを画面にポップアップ表示する処理
 (function() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -11,7 +7,19 @@ import { APP_CONFIG } from "./config.js";
   if (msgTitle && msgBody) {
     setTimeout(() => {
       const cleanBody = decodeURIComponent(msgBody).replace(/\\n/g, '\n');
-      alert(`【${decodeURIComponent(msgTitle)}】\n\n${cleanBody}`);
+      
+      // 🚨 以前の alert() を削除し、カスタムモーダルを表示する処理に変更
+      document.getElementById('modal-title').innerText = decodeURIComponent(msgTitle);
+      document.getElementById('modal-body').innerText = cleanBody;
+      const modal = document.getElementById('custom-modal');
+      modal.classList.remove('hidden');
+
+      // 閉じるボタンの処理
+      document.getElementById('modal-close').addEventListener('click', () => {
+        modal.classList.add('hidden');
+      });
+
+      // URLからパラメータを消してスッキリさせる
       const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
     }, 500);

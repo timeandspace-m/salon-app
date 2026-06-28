@@ -343,9 +343,63 @@ button.tab-btn.active {
   border-radius: 0;
 }
 
+/* ======= カスタムポップアップ ======= */
+#custom-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#custom-modal.hidden {
+  display: none !important;
+}
+.modal-content {
+  background-color: #fff;
+  padding: 25px 20px;
+  border-radius: 12px;
+  width: 85%;
+  max-width: 320px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  text-align: center;
+}
+#modal-title {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  color: var(--btn-color);
+  border-bottom: 1px dashed var(--border-color);
+  padding-bottom: 10px;
+}
+#modal-body {
+  font-size: 14px;
+  color: var(--text-color);
+  text-align: left;
+  line-height: 1.6;
+  white-space: pre-wrap; /* 改行を反映させる */
+  margin-bottom: 20px;
+}
+#modal-close {
+  margin-top: 0;
+  padding: 10px;
+  font-size: 14px;
+}
+
   </style>
 </head>
 <body>
+
+  <div id="custom-modal" class="hidden">
+    <div class="modal-content">
+      <h3 id="modal-title"></h3>
+      <p id="modal-body"></p>
+      <button id="modal-close">閉じる</button>
+    </div>
+  </div>
 
   <div class="container">
     
