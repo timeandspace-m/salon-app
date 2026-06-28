@@ -1,3 +1,7 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
+import { APP_CONFIG } from "./config.js";
+
 // 🌟通知タップで起動した際、メッセージを画面にポップアップ表示する処理
 (function() {
   const urlParams = new URLSearchParams(window.location.search);
