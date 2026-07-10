@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebas
 import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 import { APP_CONFIG } from "./config.js";
 
-// 🌟通知タップで起動した際、メッセージを画面にポップアップ表示する処理
+// 通知タップ時のポップアップ
 (function() {
   const urlParams = new URLSearchParams(window.location.search);
   const msgTitle = urlParams.get('msg_title');
@@ -11,19 +11,15 @@ import { APP_CONFIG } from "./config.js";
   if (msgTitle && msgBody) {
     setTimeout(() => {
       const cleanBody = decodeURIComponent(msgBody).replace(/\\n/g, '\n');
-      
-      // 🚨 以前の alert() を削除し、カスタムモーダルを表示する処理に変更
       document.getElementById('modal-title').innerText = decodeURIComponent(msgTitle);
       document.getElementById('modal-body').innerText = cleanBody;
       const modal = document.getElementById('custom-modal');
       modal.classList.remove('hidden');
 
-      // 閉じるボタンの処理
       document.getElementById('modal-close').addEventListener('click', () => {
         modal.classList.add('hidden');
       });
 
-      // URLからパラメータを消してスッキリさせる
       const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
     }, 500);
@@ -36,7 +32,6 @@ const GAS_WEB_APP_URL = APP_CONFIG.GAS_WEB_APP_URL;
 
 document.addEventListener("DOMContentLoaded", () => {
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-  
   if (isStandalone) {
     document.getElementById('app-content').classList.remove('hidden');
   } else {
@@ -85,10 +80,13 @@ if (form) {
         return;
       }
 
+      // 🌟【追加部分】birthday に選んだ月をセットして送信します
       const formData = {
+        action: "register", // GAS側で「新規登録」だと判別するための目印
         name: document.getElementById('customer-name').value,
         kana: document.getElementById('customer-kana').value,
         email: document.getElementById('customer-email').value,
+        birthday: document.getElementById('customer-bday').value,
         id: "",
         type: "プッシュ通知",
         token: currentToken
@@ -116,17 +114,14 @@ if (form) {
   });
 }
 
-// 🌟画面下のタブを切り替える仕組み
 document.addEventListener('DOMContentLoaded', () => {
   const tabBtns = document.querySelectorAll('.tab-btn');
   const tabPanels = document.querySelectorAll('.tab-panel');
-
   if (tabBtns.length > 0) {
     tabBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         tabBtns.forEach(b => b.classList.remove('active'));
         tabPanels.forEach(p => p.classList.remove('active'));
-        
         btn.classList.add('active');
         const targetId = btn.getAttribute('data-tab');
         document.getElementById(targetId).classList.add('active');
@@ -135,19 +130,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// 🌟アプリ起動時に次回の予約を自動取得する処理
 async function loadNextReservation() {
   const reservationText = document.getElementById('next-reservation');
   if (!reservationText) return;
-  
   try {
     const messaging = getMessaging();
     const registration = await navigator.serviceWorker.ready;
-    
-    const token = await getToken(messaging, { 
-      vapidKey: APP_CONFIG.VAPID_KEY, 
-      serviceWorkerRegistration: registration 
-    });
+    const token = await getToken(messaging, { vapidKey: APP_CONFIG.VAPID_KEY, serviceWorkerRegistration: registration });
 
     if (!token) {
       reservationText.textContent = "通知設定が未登録です";
