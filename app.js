@@ -235,3 +235,26 @@ if (checkinBtn) {
     }
   });
 }
+
+// =========================================================
+// 🌟 誕生月のくるくるピッカー（ドラムロール）の設定
+// =========================================================
+document.addEventListener("DOMContentLoaded", () => {
+  const bdayInput = document.getElementById('customer-bday');
+  
+  // ライブラリが正しく読み込まれていて、入力欄が存在する場合のみ実行
+  if (bdayInput && typeof MobileSelect !== 'undefined') {
+    new MobileSelect({
+      trigger: '#customer-bday',
+      title: '誕生月を選択',
+      wheels: [
+        { data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'] }
+      ],
+      position: [0], // 初期位置（1月）
+      callback: function(indexArr, data) {
+        // 選択された値を入力欄にセットする
+        bdayInput.value = data[0];
+      }
+    });
+  }
+});
