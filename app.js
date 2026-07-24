@@ -85,11 +85,14 @@ if (form) {
         return;
       }
 
+      // 🌟 キャッシュ対策とAPIキーを明記したペイロード
       const formData = {
-        action: "register", // 🌟 これを追加！「新規登録です」という名札
+        action: "register", 
+        api_key: "TimeSpace_Secure_2026_xyz", // 登録時も念のため付与
         name: document.getElementById('customer-name').value,
         kana: document.getElementById('customer-kana').value,
         email: document.getElementById('customer-email').value,
+        birthday: document.getElementById('customer-bday') ? document.getElementById('customer-bday').value : "",
         id: "",
         type: "プッシュ通知",
         token: currentToken
@@ -97,12 +100,13 @@ if (form) {
 
       const response = await fetch(GAS_WEB_APP_URL, {
         method: "POST",
+        cache: "no-store", // 🌟 iOS Safariのキャッシュを強制的に無効化
         body: JSON.stringify(formData)
       });
       
-      // 🌟 通信結果だけでなく、GASの中身の返事も確認する
       const result = await response.json();
       
+      // GASからの明確な成功ステータスのみを許可
       if (response.ok && result.status === "success") {
         alert("ご登録が完了しました！");
         document.getElementById('registration-form').reset();
