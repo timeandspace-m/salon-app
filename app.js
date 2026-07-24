@@ -86,6 +86,7 @@ if (form) {
       }
 
       const formData = {
+        action: "register", // 🌟 これを追加！「新規登録です」という名札
         name: document.getElementById('customer-name').value,
         kana: document.getElementById('customer-kana').value,
         email: document.getElementById('customer-email').value,
@@ -99,11 +100,14 @@ if (form) {
         body: JSON.stringify(formData)
       });
       
-      if (response.ok) {
+      // 🌟 通信結果だけでなく、GASの中身の返事も確認する
+      const result = await response.json();
+      
+      if (response.ok && result.status === "success") {
         alert("ご登録が完了しました！");
         document.getElementById('registration-form').reset();
       } else {
-        throw new Error("サーバーエラー");
+        throw new Error(result.message || "サーバーエラー");
       }
 
     } catch (error) {
