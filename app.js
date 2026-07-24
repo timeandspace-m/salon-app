@@ -187,10 +187,12 @@ if (checkinBtn) {
     checkinMsg.textContent = "";
 
     try {
-      // 2. プッシュ通知用のデバイストークンを取得
-      const messaging = firebase.messaging(); // ※Firebaseの環境に合わせてください
+      // 2. プッシュ通知用のデバイストークンを取得（★ここを新しい書き方に修正しました）
       const registration = await navigator.serviceWorker.ready;
-      const currentToken = await messaging.getToken({ vapidKey: APP_CONFIG.VAPID_KEY, serviceWorkerRegistration: registration });
+      const currentToken = await getToken(messaging, { 
+        vapidKey: APP_CONFIG.VAPID_KEY, 
+        serviceWorkerRegistration: registration 
+      });
 
       if (!currentToken) {
         throw new Error("通知設定が許可されていないため、チェックインできません。");
