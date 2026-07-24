@@ -389,6 +389,53 @@ button.tab-btn.active {
   font-size: 14px;
 }
 
+/* チェックインボタン周りのデザイン */
+.checkin-container {
+  text-align: center;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+.checkin-btn {
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 16px 32px;
+  font-size: 18px;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  width: 100%;
+  max-width: 300px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* 押した時のへこみアニメーション */
+.checkin-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* 処理中・完了後の無効化状態 */
+.checkin-btn:disabled {
+  background: #BDBDBD;
+  box-shadow: none;
+  transform: none;
+  cursor: not-allowed;
+}
+
+.checkin-msg {
+  font-size: 14px;
+  color: #d32f2f;
+  margin-top: 10px;
+  min-height: 20px;
+}
+
   </style>
 </head>
 <body>
@@ -443,12 +490,21 @@ button.tab-btn.active {
           <h3>📅 次回のご予約日時</h3>
           <p id="next-reservation">確認中...</p>
         </div>
+
+      <!-- チェックインボタンのコンテナ -->
+        <div class="checkin-container">
+          <button id="checkin-btn" class="checkin-btn">
+            <span class="icon">✅</span> お店にチェックイン
+          </button>
+          <p id="checkin-msg" class="checkin-msg"></p>
+        </div>
       </div>
 
+      
       <div id="tab-hp" class="tab-panel">
         <h2 style="text-align: center; font-size: 18px; margin-bottom: 15px;">Salon HP</h2>
         <iframe src="https://timeandspace.sakura.ne.jp/" class="hp-iframe" title="サロンホームページ"></iframe>
-      </div>
+      </div>  
 
       <div id="tab-config" class="tab-panel">
         <h1>tiMe and space<br>ご予約リマインダー</h1>
