@@ -10,14 +10,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap');
 
 :root {
-  --bg-color: #D9DFE3;
-  --text-color: #2C3539;
-  --border-color: #C0C8D0;
-  --btn-color: #5D6C7B;
+  --bg-color: #D9DFE3; /* 静寂を感じるブルーグレー */
+  --text-color: #2C3539; /* 引き締まったチャコールグレー */
+  --border-color: #C0C8D0; /* 淡いスモークブルー */
+  --btn-color: #5D6C7B; /* 落ち着きのあるスレートネイビー */
   --btn-hover: #4B5865;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   font-family: 'Noto Sans JP', sans-serif;
@@ -40,7 +42,9 @@ body {
   margin: auto;
 }
 
-.hidden { display: none !important; }
+.hidden {
+  display: none !important;
+}
 
 h1 {
   font-family: 'Josefin Sans', 'Noto Sans JP', sans-serif;
@@ -52,57 +56,339 @@ h1 {
   letter-spacing: 1px;
 }
 
-.guide-box { text-align: center; }
-.guide-icon { font-size: 45px; margin-bottom: 10px; }
-.guide-desc { font-size: 13px; line-height: 1.6; margin-bottom: 25px; }
-.guide-step { background-color: #FAF9F8; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px 15px; margin-bottom: 15px; }
-.os-title { font-weight: 500; color: var(--btn-color); margin-bottom: 15px; font-size: 15px; text-align: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 10px; }
-.step-list { padding-left: 0; margin: 0; list-style: none; counter-reset: step-counter; }
-.step-list li { position: relative; padding-left: 32px; margin-bottom: 15px; font-size: 13.5px; line-height: 1.5; text-align: left;}
-.step-list li::before { content: counter(step-counter); counter-increment: step-counter; position: absolute; left: 0; top: 0; width: 22px; height: 22px; background-color: var(--btn-color); color: #fff; border-radius: 50%; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
-.step-list strong { color: var(--btn-color); }
-.inline-icon { width: 1.3em; height: 1.3em; vertical-align: -0.25em; margin: 0 2px; stroke: var(--btn-color); }
-.guide-note { font-size: 11px; color: #888; margin-top: 20px; }
-
-.info-text { background-color: #FAF9F8; border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; font-size: 13px; line-height: 1.6; margin-bottom: 25px; }
-.info-text .highlight { font-weight: 500; color: var(--btn-color); }
-.info-text .small-text { font-size: 11px; color: #888; display: block; margin-top: 5px; }
-.form-group { margin-bottom: 20px; text-align: left; }
-label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500; }
-input[type="text"], input[type="email"], select {
-  width: 100%; padding: 12px 15px; font-size: 16px; font-family: 'Noto Sans JP', sans-serif;
-  border: 1px solid var(--border-color); border-radius: 8px; background-color: #FAF9F8; color: var(--text-color);
-  appearance: none; /* スマホ特有のデザインをリセット */
+/* ======= アプリ化案内画面のデザイン ======= */
+.guide-box {
+  text-align: center;
 }
-input:focus, select:focus { outline: none; border-color: var(--btn-color); background-color: #ffffff; }
-button { width: 100%; padding: 15px; font-size: 16px; font-weight: 500; letter-spacing: 2px; color: #fff; background-color: var(--btn-color); border: none; border-radius: 25px; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-button:hover { background-color: var(--btn-hover); }
-button:disabled { background-color: #ccc; cursor: not-allowed; }
-.note { font-size: 13px; text-align: center; margin-bottom: 15px; font-weight: 500; }
+.guide-icon {
+  font-size: 45px;
+  margin-bottom: 10px;
+}
+.guide-desc {
+  font-size: 13px;
+  color: var(--text-color);
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
 
-.tab-panel { display: none; }
-.tab-panel.active { display: block; }
-.tab-bar { position: fixed; bottom: 0; left: 0; width: 100%; background-color: #ffffff; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); border-top: 1px solid var(--border-color); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
-button.tab-btn { background-color: transparent; color: #a49e98; width: auto; padding: 5px 15px; margin: 0; border-radius: 0; font-size: 11px; display: flex; flex-direction: column; align-items: center; }
-button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
-.tab-icon { font-size: 22px; margin-bottom: 4px; }
-#app-content { padding-bottom: 80px; }
+/* 🌟 UI改善：ステップデザインを美しく整理しました */
+.guide-step {
+  background-color: #FAF9F8;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px 15px;
+  text-align: left;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
 
-.welcome-box { text-align: center; margin-bottom: 25px; }
-.welcome-box h2 { font-weight: 500; margin-bottom: 5px; }
-.info-card { background-color: #FAF9F8; border: 1px solid var(--border-color); border-radius: 12px; padding: 25px 20px; text-align: center; }
-.info-card h3 { font-size: 14px; margin: 0 0 15px 0; font-weight: 500; }
-#next-reservation { font-size: 18px; font-weight: bold; color: var(--btn-color); margin: 0; }
-.hp-iframe { width: 100%; height: 65vh; border: 1px solid var(--border-color); border-radius: 8px; }
-#tab-hp.active { position: fixed; top: 0; left: 0; width: 100vw; height: calc(100vh - 62px - env(safe-area-inset-bottom)); z-index: 999; background-color: #ffffff; }
-#tab-hp h2 { display: none; }
-#tab-hp .hp-iframe { width: 100%; height: 100%; border: none; border-radius: 0; }
+/* OSの名前（iPhone / Android）のタイトル */
+.os-title {
+  font-weight: 500;
+  color: var(--btn-color);
+  margin-bottom: 15px;
+  font-size: 15px;
+  text-align: center;
+  border-bottom: 1px dashed var(--border-color);
+  padding-bottom: 10px;
+  letter-spacing: 1px;
+}
 
-#custom-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.4); z-index: 2000; display: flex; justify-content: center; align-items: center; }
-.modal-content { background-color: #fff; padding: 25px 20px; border-radius: 12px; width: 85%; max-width: 320px; text-align: center; }
-#modal-title { margin: 0 0 15px 0; font-size: 16px; color: var(--btn-color); border-bottom: 1px dashed var(--border-color); padding-bottom: 10px; }
-#modal-body { font-size: 14px; text-align: left; line-height: 1.6; white-space: pre-wrap; margin-bottom: 20px; }
-#modal-close { margin-top: 0; padding: 10px; font-size: 14px; }
+/* 番号付きリストの設定 */
+.step-list {
+  padding-left: 0;
+  margin: 0;
+  list-style: none;
+  counter-reset: step-counter;
+}
+
+.step-list li {
+  position: relative;
+  padding-left: 32px;
+  margin-bottom: 15px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--text-color);
+}
+
+.step-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* 丸い番号アイコンのデザイン */
+.step-list li::before {
+  content: counter(step-counter);
+  counter-increment: step-counter;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 22px;
+  height: 22px;
+  background-color: var(--btn-color);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step-list strong {
+  color: var(--btn-color);
+}
+
+/* アイコン設定（少しだけ大きく調整） */
+.inline-icon {
+  width: 1.3em;
+  height: 1.3em;
+  vertical-align: -0.25em;
+  margin: 0 2px;
+  stroke: var(--btn-color);
+}
+
+.guide-note {
+  font-size: 11px;
+  color: #888;
+  margin-top: 20px;
+}
+
+/* ======= 登録フォーム画面のデザイン ======= */
+.info-text {
+  background-color: #FAF9F8;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 15px;
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 25px;
+  color: var(--text-color);
+}
+.info-text .highlight {
+  font-weight: 500;
+  color: var(--btn-color);
+}
+.info-text .small-text {
+  font-size: 11px;
+  color: #888;
+  display: block;
+  margin-top: 5px;
+}
+.form-group {
+  margin-bottom: 20px;
+}
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+input[type="text"],
+input[type="email"] {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 16px;
+  font-family: 'Noto Sans JP', sans-serif;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: #FAF9F8;
+  color: var(--text-color);
+  transition: all 0.3s ease;
+  appearance: none;
+}
+input:focus {
+  outline: none;
+  border-color: var(--btn-color);
+  background-color: #ffffff;
+}
+button {
+  width: 100%;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  color: #fff;
+  background-color: var(--btn-color);
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+button:hover {
+  background-color: var(--btn-hover);
+}
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+.note {
+  font-size: 13px;
+  color: var(--text-color);
+  text-align: center;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+/* ▼▼▼ ここから下が、既存のコードを壊さずに追加した「タブ・マイページ用」の新しいCSSです ▼▼▼ */
+.tab-panel {
+  display: none;
+}
+.tab-panel.active {
+  display: block;
+}
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
+  border-top: 1px solid var(--border-color);
+  z-index: 1000;
+  padding-bottom: env(safe-area-inset-bottom); /* iPhoneのホームバー避け */
+}
+/* 既存のbuttonデザインを上書きして、タブ用のスマートなボタンにする設定 */
+button.tab-btn {
+  background-color: transparent;
+  color: #a49e98;
+  width: auto;
+  padding: 5px 15px;
+  margin: 0;
+  border-radius: 0;
+  font-size: 11px;
+  letter-spacing: normal;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: color 0.3s ease;
+}
+button.tab-btn:hover {
+  background-color: transparent;
+}
+button.tab-btn.active {
+  color: var(--btn-color);
+  font-weight: bold;
+}
+.tab-icon {
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+#app-content {
+  padding-bottom: 80px; /* タブバーで下のコンテンツが隠れないように余白を追加 */
+}
+
+/* ホーム（マイページ）用の追加デザイン */
+.welcome-box {
+  text-align: center;
+  margin-bottom: 25px;
+}
+.welcome-box h2 {
+  font-weight: 500;
+  color: var(--text-color);
+  margin-bottom: 5px;
+}
+.info-card {
+  background-color: #FAF9F8;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 25px 20px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+.info-card h3 {
+  font-size: 14px;
+  color: var(--text-color);
+  margin: 0 0 15px 0;
+  font-weight: 500;
+}
+#next-reservation {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--btn-color);
+  margin: 0;
+}
+/* HP埋め込み用のデザイン */
+.hp-iframe {
+  width: 100%;
+  height: 65vh;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+/* 🌟【新規】ホームページを画面いっぱいに広げるための設定 */
+#tab-hp.active {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  /* 画面全体の高さから、下のタブバーの高さ（約62px）とiPhoneのバーの余白を引く */
+  height: calc(100vh - 62px - env(safe-area-inset-bottom)); 
+  z-index: 999; /* タブバー(z-index: 1000)のすぐ裏に配置して、タブ操作を邪魔しないようにする */
+  background-color: #ffffff;
+}
+
+#tab-hp h2 {
+  display: none; /* 画面をできるだけ広く使うため、「Salon HP」の文字は自動で消します */
+}
+
+/* iframe自体も隙間なく100%広げる */
+.hp-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 0;
+}
+
+/* ======= カスタムポップアップ ======= */
+#custom-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#custom-modal.hidden {
+  display: none !important;
+}
+.modal-content {
+  background-color: #fff;
+  padding: 25px 20px;
+  border-radius: 12px;
+  width: 85%;
+  max-width: 320px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  text-align: center;
+}
+#modal-title {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  color: var(--btn-color);
+  border-bottom: 1px dashed var(--border-color);
+  padding-bottom: 10px;
+}
+#modal-body {
+  font-size: 14px;
+  color: var(--text-color);
+  text-align: left;
+  line-height: 1.6;
+  white-space: pre-wrap; /* 改行を反映させる */
+  margin-bottom: 20px;
+}
+#modal-close {
+  margin-top: 0;
+  padding: 10px;
+  font-size: 14px;
+}
+
   </style>
 </head>
 <body>
@@ -126,7 +412,7 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
         <div id="ios-guide" class="guide-step hidden">
           <div class="os-title">iPhoneをご利用の方</div>
           <ol class="step-list">
-            <li>画面の <strong>共有ボタン</strong> から共有をタップ</li>
+            <li>画面の <strong>共有ボタン <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></strong> 、または <strong>メニューボタン（ <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle></svg> など ）</strong> から共有をタップ</li>
             <li>一覧から <strong>「ホーム画面に追加」</strong> を選択</li>
             <li><strong>「webアプリとして開く」をオン</strong> にして追加</li>
           </ol>
@@ -135,12 +421,15 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
         <div id="android-guide" class="guide-step hidden">
           <div class="os-title">Androidをご利用の方</div>
           <ol class="step-list">
-            <li>アドレスバー付近の <strong>メニューボタン</strong> をタップ</li>
-            <li>一覧から <strong>「ホーム画面に追加」</strong> を選択</li>
+            <li>アドレスバー付近の <strong>メニューボタン（ <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="12" cy="19" r="1.5"></circle></svg> や <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle></svg> など ）</strong> をタップ</li>
+            <li>一覧から <strong>「ホーム画面に追加」から「インストール」</strong> または <strong>「アプリをインストール」</strong> を選択</li>
           </ol>
         </div>
+
+        <p class="guide-note">※追加後、ホーム画面にできた新しいアイコンから開くと、登録画面が表示されます。</p>
       </div>
     </div>
+
 
     <div id="app-content" class="hidden">
       
@@ -163,8 +452,17 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
 
       <div id="tab-config" class="tab-panel">
         <h1>tiMe and space<br>ご予約リマインダー</h1>
-        
-        <!-- 🌟【追加部分】誕生月の入力項目を追加したフォームです -->
+        <p class="note">ご予約日の前日と当日に、確認のお知らせをお届けします。</p>
+
+        <div class="info-text">
+          ご予約の確認通知は、以下の時間帯に<strong>「プッシュ通知」</strong>にてお届けいたします。<br><br>
+          <span class="highlight">■ ご予約前日： 19:00 〜 20:00 の間</span><br>
+          <span class="highlight">■ ご予約当日： 7:00 〜 8:00 の間</span><br><br>
+          ご登録後、ご入力いただいたアドレス宛に「受付完了の自動返信メール」を送信いたします。メールを確実にお届けするため、アドレスはお間違いのないようご入力をお願いいたします。<br>
+          <span class="small-text">（※すぐに届かない場合は、入力間違いや迷惑メールをご確認のうえ、お手数ですが再度ご登録をお願いいたします。）</span><br><br>
+          万が一、前日・当日のプッシュ通知が配信されないなどの不具合がございましたら、ご来店時にどうぞお気軽にお知らせください。
+        </div>
+
         <form id="registration-form">
           <div class="form-group">
             <label>お名前（フルネーム）</label>
@@ -178,45 +476,29 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
             <label>メールアドレス</label>
             <input type="email" id="customer-email" required>
           </div>
-          
-          <div class="form-group">
-            <label>誕生月</label>
-            <select id="customer-bday" required>
-              <option value="">選択してください</option>
-              <option value="1月">1月</option>
-              <option value="2月">2月</option>
-              <option value="3月">3月</option>
-              <option value="4月">4月</option>
-              <option value="5月">5月</option>
-              <option value="6月">6月</option>
-              <option value="7月">7月</option>
-              <option value="8月">8月</option>
-              <option value="9月">9月</option>
-              <option value="10月">10月</option>
-              <option value="11月">11月</option>
-              <option value="12月">12月</option>
-            </select>
-          </div>
-
           <button type="submit" id="submit-btn">登録する</button>
         </form>
       </div>
-
       <nav class="tab-bar">
         <button type="button" class="tab-btn active" data-tab="tab-home">
-          <span class="tab-icon">🏠</span><span class="tab-label">ホーム</span>
+          <span class="tab-icon">🏠</span>
+          <span class="tab-label">ホーム</span>
         </button>
         <button type="button" class="tab-btn" data-tab="tab-hp">
-          <span class="tab-icon">🌐</span><span class="tab-label">HP</span>
+          <span class="tab-icon">🌐</span>
+          <span class="tab-label">HP</span>
         </button>
         <button type="button" class="tab-btn" data-tab="tab-config">
-          <span class="tab-icon">⚙️</span><span class="tab-label">通知設定</span>
+          <span class="tab-icon">⚙️</span>
+          <span class="tab-label">通知設定</span>
         </button>
       </nav>
 
     </div>
+
   </div>
 
   <script type="module" src="app.js?v=20260702"></script>
+
 </body>
 </html>
