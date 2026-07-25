@@ -195,7 +195,7 @@ if (checkinBtn) {
     checkinMsg.textContent = "";
 
     try {
-      // 2. プッシュ通知用のデバイストークンを取得（★ここを新しい書き方に修正しました）
+      // 2. プッシュ通知用のデバイストークンを取得
       const registration = await navigator.serviceWorker.ready;
       const currentToken = await getToken(messaging, { 
         vapidKey: APP_CONFIG.VAPID_KEY, 
@@ -234,37 +234,4 @@ if (checkinBtn) {
       checkinBtn.innerHTML = "<span class='icon'>✅</span> お店にチェックイン";
     }
   });
-}
-
-// =========================================================
-// 🌟 誕生月のくるくるピッカー（ドラムロール）の設定
-// =========================================================
-function initMobileSelect() {
-  const bdayInput = document.getElementById('customer-bday');
-  
-  // ライブラリが読み込まれており、対象の入力欄がある場合のみ実行
-  if (bdayInput && typeof MobileSelect !== 'undefined') {
-    new MobileSelect({
-      trigger: '#customer-bday',
-      title: '誕生月を選択',
-      wheels: [
-        { data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'] }
-      ],
-      position: [0], // 初期位置（1月）
-      callback: function(indexArr, data) {
-        // 選択された値を入力欄にセットする
-        bdayInput.value = data[0];
-      }
-    });
-  } else {
-    console.warn("MobileSelectの準備ができていません");
-  }
-}
-
-// モジュール(type="module")特有の読み込みズレを解消する確実な起動処理
-if (document.readyState === 'loading') {
-  document.addEventListener("DOMContentLoaded", initMobileSelect);
-} else {
-  // 既に読み込みが終わっていれば、即座に起動する
-  initMobileSelect();
 }

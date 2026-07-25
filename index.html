@@ -6,7 +6,6 @@
   <title>サロン通知設定</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mobile-select/1.2.2/mobileSelect.min.css">
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap');
 
@@ -163,7 +162,6 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
   <div class="container">
     
     <div id="install-guide" class="hidden">
-      <!-- (省略せず完全な状態) -->
       <div class="guide-box">
         <div class="guide-icon">📱</div>
         <h1>tiMe and space<br>ご予約リマインダー</h1>
@@ -189,7 +187,6 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
         <p class="guide-note">※追加後、ホーム画面にできた新しいアイコンから開くと、登録画面が表示されます。</p>
       </div>
     </div>
-
 
     <div id="app-content" class="hidden">
       
@@ -244,10 +241,24 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
             <input type="email" id="customer-email" required>
           </div>
           
-          <!-- 🌟 誕生月プルダウン（CSS統一済み） -->
-         <div class="form-group">
+          <!-- 🌟 スマホ標準の内蔵プルダウン（ネイティブ）に修正 -->
+          <div class="form-group">
             <label>誕生月</label>
-            <input type="text" id="customer-bday" placeholder="タップして選択" readonly required style="cursor: pointer; background-color: #fff; text-align: center;">
+            <select id="customer-bday" required style="cursor: pointer; background-color: #fff; text-align: center;">
+              <option value="" disabled selected>タップして選択</option>
+              <option value="1月">1月</option>
+              <option value="2月">2月</option>
+              <option value="3月">3月</option>
+              <option value="4月">4月</option>
+              <option value="5月">5月</option>
+              <option value="6月">6月</option>
+              <option value="7月">7月</option>
+              <option value="8月">8月</option>
+              <option value="9月">9月</option>
+              <option value="10月">10月</option>
+              <option value="11月">11月</option>
+              <option value="12月">12月</option>
+            </select>
           </div>
 
           <button type="submit" id="submit-btn">登録する</button>
@@ -273,8 +284,7 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
 
   </div>
 
-  <!-- 🌟 キャッシュ破棄のために日付を更新 -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mobile-select/1.2.2/mobileSelect.min.js"></script>
-  <script type="module" src="app.js?v=20260731"></script>
+  <!-- 🌟 強制更新用のパラメーター付きJS -->
+  <script type="module" src="app.js?v=2026005"></script>
 </body>
 </html>
