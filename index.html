@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>サロン通知設定</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icon-192.png">
-  <!-- 🌟 ドラムロール用のデザイン（CSS）を復活 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mobile-select/1.2.2/mobileSelect.min.css">
-  <style>
+<meta charset="UTF-8">
+<!-- 🌟 iOSのズームによるUI崩れとタップバグを防ぐため viewport を強化 -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>サロン通知設定</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<!-- ドラムロール用のデザイン（CSS） -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mobile-select/1.2.2/mobileSelect.min.css">
+<style>
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap');
 
 :root {
-  --bg-color: #D9DFE3;
-  --text-color: #2C3539;
-  --border-color: #C0C8D0;
-  --btn-color: #5D6C7B;
-  --btn-hover: #4B5865;
+--bg-color: #D9DFE3;
+--text-color: #2C3539;
+--border-color: #C0C8D0;
+--btn-color: #5D6C7B;
+--btn-hover: #4B5865;
 }
 
 * { box-sizing: border-box; }
@@ -27,7 +28,6 @@ body { font-family: 'Noto Sans JP', sans-serif; background-color: var(--bg-color
 .hidden { display: none !important; }
 h1 { font-family: 'Josefin Sans', 'Noto Sans JP', sans-serif; text-align: center; font-size: 22px; font-weight: 500; margin-bottom: 20px; color: var(--text-color); letter-spacing: 1px; }
 
-/* アプリ化案内・タブなどのデザインは省略せず維持 */
 .guide-box { text-align: center; }
 .guide-icon { font-size: 45px; margin-bottom: 10px; }
 .guide-desc { font-size: 13px; color: var(--text-color); line-height: 1.6; margin-bottom: 25px; }
@@ -84,136 +84,149 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
 .checkin-btn:active { transform: translateY(3px); box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); }
 .checkin-btn:disabled { background: #BDBDBD; box-shadow: none; transform: none; cursor: not-allowed; }
 .checkin-msg { font-size: 14px; color: #d32f2f; margin-top: 10px; min-height: 20px; }
-  </style>
+</style>
 </head>
 <body>
-  <div id="custom-modal" class="hidden">
-    <div class="modal-content">
-      <h3 id="modal-title"></h3>
-      <p id="modal-body"></p>
-      <button id="modal-close">閉じる</button>
-    </div>
-  </div>
+<div id="custom-modal" class="hidden">
+<div class="modal-content">
+<h3 id="modal-title"></h3>
+<p id="modal-body"></p>
+<button id="modal-close">閉じる</button>
+</div>
+</div>
 
-  <div class="container">
-    <div id="install-guide" class="hidden">
-      <!-- アプリ化案内のHTMLは以前のものと全く同じ -->
-      <div class="guide-box">
-        <div class="guide-icon">📱</div>
-        <h1>tiMe and space<br>メンバー登録</h1>
-        <p class="guide-desc">こちらはアプリ専用のシステムです。<br>確実にお知らせをお届けするため、<br>ホーム画面に追加してご利用ください。</p>
-        <div id="ios-guide" class="guide-step hidden">
-          <div class="os-title">iPhoneをご利用の方</div>
-          <ol class="step-list">
-            <li>画面の <strong>共有ボタン</strong> から共有をタップ</li>
-            <li>一覧から <strong>「ホーム画面に追加」</strong> を選択</li>
-            <li><strong>「webアプリとして開く」をオン</strong> にして追加</li>
-          </ol>
-        </div>
-        <div id="android-guide" class="guide-step hidden">
-          <div class="os-title">Androidをご利用の方</div>
-          <ol class="step-list">
-            <li>アドレスバー付近の <strong>メニューボタン</strong> をタップ</li>
-            <li>一覧から <strong>「ホーム画面に追加」から「インストール」や「インストールしてショートカットを作成」でアプリを選択</strong> を選択</li>
-          </ol>
-        </div>
-      </div>
-    </div>
+<div class="container">
+<div id="install-guide" class="hidden">
+<div class="guide-box">
+<div class="guide-icon">📱</div>
+<h1>tiMe and space<br>メンバー登録</h1>
+<p class="guide-desc">こちらはアプリ専用のシステムです。<br>確実にお知らせをお届けするため、<br>ホーム画面に追加してご利用ください。</p>
+<div id="ios-guide" class="guide-step hidden">
+<div class="os-title">iPhoneをご利用の方</div>
+<ol class="step-list">
+<li>画面の <strong>共有ボタン</strong> から共有をタップ</li>
+<li>一覧から <strong>「ホーム画面に追加」</strong> を選択</li>
+<li><strong>「webアプリとして開く」をオン</strong> にして追加</li>
+</ol>
+</div>
+<div id="android-guide" class="guide-step hidden">
+<div class="os-title">Androidをご利用の方</div>
+<ol class="step-list">
+<li>アドレスバー付近の <strong>メニューボタン</strong> をタップ</li>
+<li>一覧から <strong>「ホーム画面に追加」から「インストール」や「インストールしてショートカットを作成」でアプリを選択</strong> を選択</li>
+</ol>
+</div>
+</div>
+</div>
 
-    <div id="app-content" class="hidden">
-      <div id="tab-home" class="tab-panel active">
-        <div class="welcome-box">
-          <h2>こんにちは！</h2>
-          <p class="note">いつも tiMe and space をご利用いただき<br>ありがとうございます。</p>
-        </div>
-        <div class="info-card">
-          <h3>📅 次回のご予約日時</h3>
-          <p id="next-reservation">確認中...</p>
-        </div>
-        <div class="checkin-container">
-          <button id="checkin-btn" class="checkin-btn">
-            <span class="icon">✅</span> お店にチェックイン
-          </button>
-          <p id="checkin-msg" class="checkin-msg"></p>
-        </div>
-      </div>
-      
-      <div id="tab-hp" class="tab-panel">
-        <h2 style="text-align: center; font-size: 18px; margin-bottom: 15px;">Salon HP</h2>
-        <iframe src="https://timeandspace.sakura.ne.jp/" class="hp-iframe" title="サロンホームページ"></iframe>
-      </div>  
+<div id="app-content" class="hidden">
+<div id="tab-home" class="tab-panel active">
+<div class="welcome-box">
+<h2>こんにちは！</h2>
+<p class="note">いつも tiMe and space をご利用いただき<br>ありがとうございます。</p>
+</div>
+<div class="info-card">
+<h3>📅 次回のご予約日時</h3>
+<p id="next-reservation">確認中...</p>
+</div>
+<div class="checkin-container">
+<button id="checkin-btn" class="checkin-btn">
+<span class="icon">✅</span> お店にチェックイン
+</button>
+<p id="checkin-msg" class="checkin-msg"></p>
+</div>
+</div>
+<div id="tab-hp" class="tab-panel">
+<h2 style="text-align: center; font-size: 18px; margin-bottom: 15px;">Salon HP</h2>
+<iframe src="https://timeandspace.sakura.ne.jp/" class="hp-iframe" title="サロンホームページ"></iframe>
+</div>
 
-      <div id="tab-config" class="tab-panel">
-        <h1>tiMe and space<br>ご予約リマインダー</h1>
-        <p class="note">ご予約日の前日と当日に、確認のお知らせをお届けします。</p>
+<div id="tab-config" class="tab-panel">
+<h1>tiMe and space<br>ご予約リマインダー</h1>
+<p class="note">ご予約日の前日と当日に、確認のお知らせをお届けします。</p>
 
-        <form id="registration-form">
-          <div class="form-group">
-            <label>お名前（フルネーム）</label>
-            <input type="text" id="customer-name" required>
-          </div>
-          <div class="form-group">
-            <label>フリガナ</label>
-            <input type="text" id="customer-kana" required>
-          </div>
-          <div class="form-group">
-            <label>メールアドレス</label>
-            <input type="email" id="customer-email" required>
-          </div>
-          
-          <!-- 🌟 ここを「ドラムロール」用の専用枠に戻します -->
-          <div class="form-group">
-            <label>誕生月</label>
-            <input type="text" id="customer-bday" placeholder="タップして選択" readonly required style="cursor: pointer; background-color: #fff; text-align: center;">
-          </div>
+<form id="registration-form">
+<div class="form-group">
+<label>お名前（フルネーム）</label>
+<input type="text" id="customer-name" required>
+</div>
+<div class="form-group">
+<label>フリガナ</label>
+<input type="text" id="customer-kana" required>
+</div>
+<div class="form-group">
+<label>メールアドレス</label>
+<input type="email" id="customer-email" required>
+</div>
 
-          <button type="submit" id="submit-btn">登録する</button>
-        </form>
-      </div>
+<!-- 🌟 誕生月（キャッシュ破壊確認用の v2 を追加、iOSバグ対策のCSSを追加） -->
+<div class="form-group">
+<label>誕生月 <span style="font-size: 11px; color: #ff0000; font-weight: normal;">(v2)</span></label>
+<input type="text" id="customer-bday" placeholder="タップして選択" readonly required style="cursor: pointer; background-color: #fff; text-align: center; -webkit-appearance: none; touch-action: manipulation;">
+</div>
 
-      <nav class="tab-bar">
-        <button type="button" class="tab-btn active" data-tab="tab-home">
-          <span class="tab-icon">🏠</span>
-          <span class="tab-label">ホーム</span>
-        </button>
-        <button type="button" class="tab-btn" data-tab="tab-hp">
-          <span class="tab-icon">🌐</span>
-          <span class="tab-label">HP</span>
-        </button>
-        <button type="button" class="tab-btn" data-tab="tab-config">
-          <span class="tab-icon">⚙️</span>
-          <span class="tab-label">通知設定</span>
-        </button>
-      </nav>
-    </div>
-  </div>
+<button type="submit" id="submit-btn">登録する</button>
+</form>
+</div>
 
-  <!-- 🌟 ドラムロール用のプログラムを直接読み込み -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mobile-select/1.2.2/mobileSelect.min.js"></script>
-  
-  <!-- 🌟 確実にドラムロールを起動させるための安全なスクリプト -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      // 少しだけ待ってから起動（他の処理との競合を避ける）
-      setTimeout(function() {
-        var bdayInput = document.getElementById('customer-bday');
-        if (bdayInput && typeof MobileSelect !== 'undefined') {
-          new MobileSelect({
-            trigger: '#customer-bday',
-            title: '誕生月を選択',
-            wheels: [
-              { data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'] }
-            ],
-            position: [0], 
-            callback: function(indexArr, data) {
-              bdayInput.value = data[0];
-            }
-          });
-        }
-      }, 300);
-    });
-  </script>
+<nav class="tab-bar">
+<button type="button" class="tab-btn active" data-tab="tab-home">
+<span class="tab-icon">🏠</span>
+<span class="tab-label">ホーム</span>
+</button>
+<button type="button" class="tab-btn" data-tab="tab-hp">
+<span class="tab-icon">🌐</span>
+<span class="tab-label">HP</span>
+</button>
+<button type="button" class="tab-btn" data-tab="tab-config">
+<span class="tab-icon">⚙️</span>
+<span class="tab-label">通知設定</span>
+</button>
+</nav>
+</div>
+</div>
 
-  <script type="module" src="app.js?v=2026007"></script>
+<!-- ドラムロール用のプログラムを直接読み込み -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mobile-select/1.2.2/mobileSelect.min.js"></script>
+
+<!-- 🌟 確実にドラムロールを起動させるための最強の初期化スクリプト -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  var bdayInput = document.getElementById('customer-bday');
+  if (!bdayInput) return;
+
+  // iOS特有の「readonly要素のタップイベント無視」バグを防ぐおまじない
+  bdayInput.addEventListener('touchstart', function() {}, {passive: true});
+
+  // MobileSelectが確実にCDNから読み込まれるのを待機して初期化（最大10回リトライ）
+  var retryCount = 0;
+  var initInterval = setInterval(function() {
+    if (typeof MobileSelect !== 'undefined') {
+      clearInterval(initInterval);
+      try {
+        new MobileSelect({
+          trigger: '#customer-bday',
+          title: '誕生月を選択',
+          wheels: [
+            { data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'] }
+          ],
+          position: [0],
+          callback: function(indexArr, data) {
+            bdayInput.value = data[0];
+          }
+        });
+      } catch(e) {
+        console.error("ドラムロール初期化エラー:", e);
+      }
+    } else {
+      retryCount++;
+      if (retryCount >= 10) clearInterval(initInterval); // 10回（2秒）待ってダメなら諦める
+    }
+  }, 200); // 0.2秒ごとにチェック
+});
+</script>
+
+<!-- app.jsの読み込み（キャッシュ破壊のためにバージョンを更新） -->
+<script type="module" src="app.js?v=20260725_v2"></script>
 </body>
 </html>
