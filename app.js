@@ -239,10 +239,10 @@ if (checkinBtn) {
 // =========================================================
 // 🌟 誕生月のくるくるピッカー（ドラムロール）の設定
 // =========================================================
-document.addEventListener("DOMContentLoaded", () => {
+function initMobileSelect() {
   const bdayInput = document.getElementById('customer-bday');
   
-  // ライブラリが正しく読み込まれていて、入力欄が存在する場合のみ実行
+  // ライブラリが読み込まれており、対象の入力欄がある場合のみ実行
   if (bdayInput && typeof MobileSelect !== 'undefined') {
     new MobileSelect({
       trigger: '#customer-bday',
@@ -256,5 +256,15 @@ document.addEventListener("DOMContentLoaded", () => {
         bdayInput.value = data[0];
       }
     });
+  } else {
+    console.warn("MobileSelectの準備ができていません");
   }
-});
+}
+
+// モジュール(type="module")特有の読み込みズレを解消する確実な起動処理
+if (document.readyState === 'loading') {
+  document.addEventListener("DOMContentLoaded", initMobileSelect);
+} else {
+  // 既に読み込みが終わっていれば、即座に起動する
+  initMobileSelect();
+}
