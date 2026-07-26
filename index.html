@@ -6,7 +6,7 @@
 <title>サロン通知設定</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mobile-select/1.2.2/mobileSelect.min.css">
+<!-- 🌟 不具合の原因だった mobileSelect の CSS は削除しました -->
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap');
 
@@ -45,7 +45,7 @@ h1 { font-family: 'Josefin Sans', 'Noto Sans JP', sans-serif; text-align: center
 .form-group { margin-bottom: 20px; }
 label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500; }
 
-input[type="text"], input[type="email"], select { width: 100%; padding: 12px 15px; font-size: 16px; font-family: 'Noto Sans JP', sans-serif; border: 1px solid var(--border-color); border-radius: 8px; background-color: #FAF9F8; color: var(--text-color); transition: all 0.3s ease; }
+input[type="text"], input[type="email"], select { width: 100%; padding: 12px 15px; font-size: 16px; font-family: 'Noto Sans JP', sans-serif; border: 1px solid var(--border-color); border-radius: 8px; background-color: #FAF9F8; color: var(--text-color); transition: all 0.3s ease; appearance: none; }
 input:focus, select:focus { outline: none; border-color: var(--btn-color); background-color: #ffffff; }
 button { width: 100%; padding: 15px; font-size: 16px; font-weight: 500; letter-spacing: 2px; color: #fff; background-color: var(--btn-color); border: none; border-radius: 25px; cursor: pointer; margin-top: 10px; transition: background-color 0.3s ease; }
 button:hover { background-color: var(--btn-hover); }
@@ -157,10 +157,24 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
 <input type="email" id="customer-email" required>
 </div>
 
-<!-- 🌟 正しい小文字コンストラクタ適用版＆appearance修正 (v4) -->
+<!-- 🌟 外部ライブラリを捨て、HTML標準の select タグを採用 (v5_Native) -->
 <div class="form-group">
-<label>誕生月 <span style="font-size: 11px; color: #008000; font-weight: normal;">(v4)</span></label>
-<input type="text" id="customer-bday" placeholder="タップして選択" readonly required style="cursor: pointer; background-color: #fff; text-align: center; appearance: none;">
+<label>誕生月 <span style="font-size: 11px; color: #008000; font-weight: normal;">(v5_Native)</span></label>
+<select id="customer-bday" required style="cursor: pointer; background-color: #fff; text-align: center; font-size: 16px;">
+  <option value="" disabled selected>タップして選択</option>
+  <option value="1月">1月</option>
+  <option value="2月">2月</option>
+  <option value="3月">3月</option>
+  <option value="4月">4月</option>
+  <option value="5月">5月</option>
+  <option value="6月">6月</option>
+  <option value="7月">7月</option>
+  <option value="8月">8月</option>
+  <option value="9月">9月</option>
+  <option value="10月">10月</option>
+  <option value="11月">11月</option>
+  <option value="12月">12月</option>
+</select>
 </div>
 
 <button type="submit" id="submit-btn">登録する</button>
@@ -184,33 +198,8 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
 </div>
 </div>
 
-<!-- ドラムロール用のプログラムを直接読み込み -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mobile-select/1.2.2/mobileSelect.min.js"></script>
+<!-- 🌟 不具合の原因だった mobileSelect の JS は完全に削除しました -->
 
-<!-- 🌟 mobile-select の正しい初期化（小文字の mobileSelect） -->
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  setTimeout(function() {
-    var bdayInput = document.getElementById('customer-bday');
-    if (bdayInput && typeof mobileSelect !== 'undefined') {
-      new mobileSelect({
-        trigger: '#customer-bday',
-        title: '誕生月を選択',
-        wheels: [
-          { data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'] }
-        ],
-        position: [0],
-        callback: function(indexArr, data) {
-          bdayInput.value = data[0];
-        }
-      });
-    } else {
-      console.error("mobileSelectが見つからないか、要素が存在しません");
-    }
-  }, 300);
-});
-</script>
-
-<script type="module" src="app.js?v=20260726_v4"></script>
+<script type="module" src="app.js?v=20260726_v5"></script>
 </body>
 </html>
