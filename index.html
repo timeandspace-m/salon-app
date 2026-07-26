@@ -6,7 +6,7 @@
 <title>サロン通知設定</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<!-- 🌟 不具合の原因だった mobileSelect の CSS は削除しました -->
+<!-- 🌟 mobileSelectのCSSを削除しました -->
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap');
 
@@ -45,7 +45,8 @@ h1 { font-family: 'Josefin Sans', 'Noto Sans JP', sans-serif; text-align: center
 .form-group { margin-bottom: 20px; }
 label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500; }
 
-input[type="text"], input[type="email"], select { width: 100%; padding: 12px 15px; font-size: 16px; font-family: 'Noto Sans JP', sans-serif; border: 1px solid var(--border-color); border-radius: 8px; background-color: #FAF9F8; color: var(--text-color); transition: all 0.3s ease; appearance: none; }
+/* 🌟 select要素もinputと同じように綺麗にスタイリングされます */
+input[type="text"], input[type="email"], select { width: 100%; padding: 12px 15px; font-size: 16px; font-family: 'Noto Sans JP', sans-serif; border: 1px solid var(--border-color); border-radius: 8px; background-color: #FAF9F8; color: var(--text-color); transition: all 0.3s ease; }
 input:focus, select:focus { outline: none; border-color: var(--btn-color); background-color: #ffffff; }
 button { width: 100%; padding: 15px; font-size: 16px; font-weight: 500; letter-spacing: 2px; color: #fff; background-color: var(--btn-color); border: none; border-radius: 25px; cursor: pointer; margin-top: 10px; transition: background-color 0.3s ease; }
 button:hover { background-color: var(--btn-hover); }
@@ -157,10 +158,10 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
 <input type="email" id="customer-email" required>
 </div>
 
-<!-- 🌟 外部ライブラリを捨て、HTML標準の select タグを採用 (v5_Native) -->
+<!-- 🌟 OS標準のピッカーが立ち上がる確実な方法に変更 -->
 <div class="form-group">
-<label>誕生月 <span style="font-size: 11px; color: #008000; font-weight: normal;">(v5_Native)</span></label>
-<select id="customer-bday" required style="cursor: pointer; background-color: #fff; text-align: center; font-size: 16px;">
+<label>誕生月</label>
+<select id="customer-bday" required style="cursor: pointer; background-color: #FAF9F8;">
   <option value="" disabled selected>タップして選択</option>
   <option value="1月">1月</option>
   <option value="2月">2月</option>
@@ -198,7 +199,7 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
 </div>
 </div>
 
-<!-- 🌟 不具合の原因だった mobileSelect の JS は完全に削除しました -->
+<!-- 🌟 mobileSelectのJSおよび初期化スクリプトをすべて削除しました -->
 
 <script type="module" src="app.js?v=20260726_v5"></script>
 </body>
