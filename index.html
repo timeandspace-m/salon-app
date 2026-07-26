@@ -2,12 +2,10 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<!-- 🌟 iOSのズームによるUI崩れとタップバグを防ぐため viewport を強化 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>サロン通知設定</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<!-- ドラムロール用のデザイン（CSS） -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mobile-select/1.2.2/mobileSelect.min.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap');
@@ -47,8 +45,13 @@ h1 { font-family: 'Josefin Sans', 'Noto Sans JP', sans-serif; text-align: center
 .form-group { margin-bottom: 20px; }
 label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500; }
 
-input[type="text"], input[type="email"], select { width: 100%; padding: 12px 15px; font-size: 16px; font-family: 'Noto Sans JP', sans-serif; border: 1px solid var(--border-color); border-radius: 8px; background-color: #FAF9F8; color: var(--text-color); transition: all 0.3s ease; }
-input:focus, select:focus { outline: none; border-color: var(--btn-color); background-color: #ffffff; }
+input[type="text"], input[type="email"] { width: 100%; padding: 12px 15px; font-size: 16px; font-family: 'Noto Sans JP', sans-serif; border: 1px solid var(--border-color); border-radius: 8px; background-color: #FAF9F8; color: var(--text-color); transition: all 0.3s ease; }
+input:focus { outline: none; border-color: var(--btn-color); background-color: #ffffff; }
+
+/* 🌟 iOS回避用の「偽入力欄」のデザイン */
+.fake-input { width: 100%; padding: 12px 15px; font-size: 16px; font-family: 'Noto Sans JP', sans-serif; border: 1px solid var(--border-color); border-radius: 8px; background-color: #ffffff; color: #888; text-align: center; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; }
+.fake-input.selected { color: var(--text-color); }
+
 button { width: 100%; padding: 15px; font-size: 16px; font-weight: 500; letter-spacing: 2px; color: #fff; background-color: var(--btn-color); border: none; border-radius: 25px; cursor: pointer; margin-top: 10px; transition: background-color 0.3s ease; }
 button:hover { background-color: var(--btn-hover); }
 button:disabled { background-color: #ccc; cursor: not-allowed; }
@@ -159,10 +162,12 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
 <input type="email" id="customer-email" required>
 </div>
 
-<!-- 🌟 誕生月（キャッシュ破壊確認用の v2 を追加、iOSバグ対策のCSSを追加） -->
+<!-- 🌟 iOS回避用の「偽入力欄」 -->
 <div class="form-group">
-<label>誕生月 <span style="font-size: 11px; color: #ff0000; font-weight: normal;">(v2)</span></label>
-<input type="text" id="customer-bday" placeholder="タップして選択" readonly required style="cursor: pointer; background-color: #fff; text-align: center; -webkit-appearance: none; touch-action: manipulation;">
+<label>誕生月 <span style="font-size: 11px; color: #ff0000; font-weight: normal;">(v3)</span></label>
+<div id="customer-bday-trigger" class="fake-input">タップして選択</div>
+<!-- 実際にデータを送るための隠し要素（app.jsはこれを読み取ります） -->
+<input type="hidden" id="customer-bday">
 </div>
 
 <button type="submit" id="submit-btn">登録する</button>
@@ -186,47 +191,39 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
 </div>
 </div>
 
-<!-- ドラムロール用のプログラムを直接読み込み -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mobile-select/1.2.2/mobileSelect.min.js"></script>
 
-<!-- 🌟 確実にドラムロールを起動させるための最強の初期化スクリプト -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-  var bdayInput = document.getElementById('customer-bday');
-  if (!bdayInput) return;
+  var trigger = document.getElementById('customer-bday-trigger');
+  var hiddenInput = document.getElementById('customer-bday');
+  if (!trigger) return;
 
-  // iOS特有の「readonly要素のタップイベント無視」バグを防ぐおまじない
-  bdayInput.addEventListener('touchstart', function() {}, {passive: true});
-
-  // MobileSelectが確実にCDNから読み込まれるのを待機して初期化（最大10回リトライ）
   var retryCount = 0;
   var initInterval = setInterval(function() {
     if (typeof MobileSelect !== 'undefined') {
       clearInterval(initInterval);
-      try {
-        new MobileSelect({
-          trigger: '#customer-bday',
-          title: '誕生月を選択',
-          wheels: [
-            { data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'] }
-          ],
-          position: [0],
-          callback: function(indexArr, data) {
-            bdayInput.value = data[0];
-          }
-        });
-      } catch(e) {
-        console.error("ドラムロール初期化エラー:", e);
-      }
+      new MobileSelect({
+        trigger: '#customer-bday-trigger',
+        title: '誕生月を選択',
+        wheels: [
+          { data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'] }
+        ],
+        position: [0],
+        callback: function(indexArr, data) {
+          trigger.innerText = data[0];         // 見た目を更新
+          trigger.classList.add('selected');   // 文字色を濃くする
+          hiddenInput.value = data[0];         // app.js用に裏でデータをセット
+        }
+      });
     } else {
       retryCount++;
-      if (retryCount >= 10) clearInterval(initInterval); // 10回（2秒）待ってダメなら諦める
+      if (retryCount >= 10) clearInterval(initInterval);
     }
-  }, 200); // 0.2秒ごとにチェック
+  }, 200);
 });
 </script>
 
-<!-- app.jsの読み込み（キャッシュ破壊のためにバージョンを更新） -->
-<script type="module" src="app.js?v=20260725_v2"></script>
+<script type="module" src="app.js?v=20260725_v3"></script>
 </body>
 </html>
