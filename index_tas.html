@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>店舗管理用PWA - 待機列ダッシュボード</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --background-color: #f5f6fa;
+            --card-bg: #ffffff;
+            --text-main: #2f3640;
+            --text-muted: #718093;
+            --danger-color: #e74c3c;
+            --success-color: #2ecc71;
+            --highlight-color: #e1f0fa;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: var(--background-color); color: var(--text-main); padding-bottom: 2rem; }
+        header { background-color: var(--primary-color); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { font-size: 1.5rem; font-weight: bold; }
+        .header-controls { display: flex; align-items: center; gap: 1rem; }
+        #last-updated { font-size: 0.9rem; color: #dcdde1; }
+        
+        button.refresh-btn { background-color: var(--accent-color); color: white; border: none; padding: 0.5rem 1rem; font-size: 1rem; border-radius: 4px; cursor: pointer; transition: background-color 0.2s; display: flex; align-items: center; gap: 0.5rem; font-weight: bold; }
+        button.refresh-btn:hover { background-color: #2980b9; }
+        button.refresh-btn:disabled { background-color: var(--text-muted); cursor: not-allowed; }
+        
+        main { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+        #empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-muted); display: none; }
+        .waitlist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+        
+        .customer-card { background-color: var(--card-bg); border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); padding: 1.5rem; border-top: 4px solid var(--accent-color); transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column; gap: 1rem; }
+        .customer-card:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
+        
+        @keyframes highlightFade {
+            0% { background-color: var(--highlight-color); box-shadow: 0 0 15px rgba(52, 152, 219, 0.6); transform: translateY(-4px); border-top: 4px solid #f1c40f; }
+            70% { background-color: var(--highlight-color); box-shadow: 0 0 10px rgba(52, 152, 219, 0.3); border-top: 4px solid #f1c40f; }
+            100% { background-color: var(--card-bg); box-shadow: 0 4px 6px rgba(0,0,0,0.05); transform: translateY(0); border-top: 4px solid var(--accent-color); }
+        }
+        .highlight-new { animation: highlightFade 4s ease-out forwards; }
+        
+        .card-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid #f1f2f6; padding-bottom: 0.5rem; }
+        .customer-name { font-size: 1.4rem; font-weight: bold; }
+        .customer-id { font-size: 0.8rem; color: var(--text-muted); }
+        .card-body { display: flex; flex-direction: column; gap: 1rem; }
+        .points-container { background-color: #f1f8ff; padding: 0.75rem; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .points-label { font-size: 0.9rem; color: #576574; font-weight: bold; }
+        .points-value { font-size: 1.5rem; font-weight: bold; color: var(--accent-color); }
+        
+        .coupons-container { flex-grow: 1; }
+        .coupons-label { font-size: 0.9rem; color: #576574; font-weight: bold; margin-bottom: 0.5rem; }
+        .coupons-list { list-style: none; }
+        
+        .coupons-list li { background-color: #fff9e6; border-left: 3px solid #f1c40f; padding: 0.5rem; margin-bottom: 0.5rem; font-size: 0.95rem; border-radius: 0 4px 4px 0; color: #3d3d3d; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .coupon-name { font-weight: bold; }
+        .coupon-expiry { font-size: 0.75rem; color: #e74c3c; background-color: #fff; padding: 2px 6px; border-radius: 4px; border: 1px solid #f1c40f; white-space: nowrap; }
+        .no-coupons { font-size: 0.9rem; color: var(--text-muted); font-style: italic; }
+        
+        #status-toast { position: fixed; bottom: 20px; right: 20px; background-color: var(--primary-color); color: white; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: opacity 0.3s, transform 0.3s; opacity: 0; transform: translateY(20px); pointer-events: none; z-index: 1000; }
+        #status-toast.show { opacity: 1; transform: translateY(0); }
+        #status-toast.error { background-color: var(--danger-color); }
+        .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 600px) { header { flex-direction: column; align-items: flex-start; gap: 1rem; } .header-controls { width: 100%; justify-content: space-between; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>店舗管理司令塔 - 待機列</h1>
+        <div class="header-controls">
+            <span id="last-updated">最終更新: --:--:--</span>
+            <button id="refresh-btn" class="refresh-btn">
+                <span id="btn-text">手動更新</span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div id="empty-state">
+            <h2>現在待機中のお客様はいません</h2>
+            <p>新しいチェックインがあると自動的に表示されます。</p>
+        </div>
+        <div id="waitlist-grid" class="waitlist-grid"></div>
+    </main>
+
+    <div id="status-toast"></div>
+
+    <!-- ★ type="module" を指定し、外部ファイルから安全に読み込む形に変更 -->
+    <script type="module">
+        import { APP_CONFIG } from './config.js';
+
+        // 外部の config.js から値を安全に引き継ぐ
+        const POLLING_INTERVAL_MS = 60000; 
+        const API_URL = APP_CONFIG.GAS_WEB_APP_URL; 
+        const API_KEY = APP_CONFIG.PWA_API_KEY;
+        
+        const gridContainer = document.getElementById('waitlist-grid');
+        const emptyState = document.getElementById('empty-state');
+        const lastUpdatedText = document.getElementById('last-updated');
+        const refreshBtn = document.getElementById('refresh-btn');
+        const btnText = document.getElementById('btn-text');
+        const statusToast = document.getElementById('status-toast');
+
+        let previousWaitlistIds = [];
+
+        const mockData = {
+            "status": "success",
+            "waitlist": [
+                {
+                    "identifier": "tanaka", "customer_name": "田中 太郎", "points": 500,
+                    "coupons": [
+                        "Member's Ticket 500 (期限: 2026-09-30)", 
+                        "お誕生日月 10% 2026/08/31迄"
+                    ]
+                },
+                {
+                    "identifier": "new_guest", "customer_name": "新規 ゲスト", "points": 0,
+                    "coupons": [ "日付がないクーポン" ]
+                }
+            ]
+        };
+
+        function renderWaitlist(waitlist) {
+            gridContainer.innerHTML = ''; 
+            
+            if (!waitlist || waitlist.length === 0) {
+                emptyState.style.display = 'block';
+                previousWaitlistIds = [];
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            const isFirstLoad = previousWaitlistIds.length === 0;
+            const currentIds = [];
+
+            waitlist.forEach(customer => {
+                currentIds.push(customer.identifier);
+                const card = document.createElement('div');
+                card.className = 'customer-card';
+
+                if (!isFirstLoad && !previousWaitlistIds.includes(customer.identifier)) {
+                    card.classList.add('highlight-new');
+                }
+
+                let couponsHtml = '';
+                if (customer.coupons && customer.coupons.length > 0) {
+                    const listItems = customer.coupons.map(coupon => {
+                        let name = "";
+                        let expiry = "";
+                        
+                        if (typeof coupon === 'string') {
+                            const dateMatch = coupon.match(/(\d{4}[-/]\d{1,2}[-/]\d{1,2})/);
+                            if (dateMatch) {
+                                expiry = dateMatch[1];
+                                name = coupon.replace(dateMatch[0], '').replace(/[（）()期限:迄\s]+/g, ' ').trim();
+                            } else {
+                                name = coupon; 
+                            }
+                        } else if (typeof coupon === 'object' && coupon !== null) {
+                            name = coupon.name || "";
+                            expiry = coupon.expires_at || "";
+                        }
+
+                        if (expiry) {
+                            return `<li>
+                                        <span class="coupon-name">${escapeHtml(name)}</span>
+                                        <span class="coupon-expiry">期限: ${escapeHtml(expiry)}</span>
+                                    </li>`;
+                        } else {
+                            return `<li><span class="coupon-name">${escapeHtml(name)}</span></li>`;
+                        }
+                    }).join('');
+                    couponsHtml = `<ul class="coupons-list">${listItems}</ul>`;
+                } else {
+                    couponsHtml = `<p class="no-coupons">利用可能なクーポンはありません</p>`;
+                }
+
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="customer-name">${escapeHtml(customer.customer_name)}</div>
+                        <div class="customer-id">ID: ${escapeHtml(customer.identifier)}</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="points-container">
+                            <span class="points-label">保有ポイント</span>
+                            <span class="points-value">${customer.points.toLocaleString()} pt</span>
+                        </div>
+                        <div class="coupons-container">
+                            <div class="coupons-label">利用可能クーポン</div>
+                            ${couponsHtml}
+                        </div>
+                    </div>
+                `;
+                gridContainer.appendChild(card);
+            });
+
+            previousWaitlistIds = currentIds;
+        }
+
+        function formatTime(date) {
+            const h = String(date.getHours()).padStart(2, '0');
+            const m = String(date.getMinutes()).padStart(2, '0');
+            const s = String(date.getSeconds()).padStart(2, '0');
+            return `${h}:${m}:${s}`;
+        }
+
+        function showToast(message, isError = false) {
+            statusToast.textContent = message;
+            if (isError) statusToast.classList.add('error');
+            else statusToast.classList.remove('error');
+            statusToast.classList.add('show');
+            setTimeout(() => { statusToast.classList.remove('show'); }, 3000);
+        }
+
+        function escapeHtml(str) {
+            if (typeof str !== 'string') return str;
+            return str.replace(/[&'`"<>]/g, function(match) {
+                return { '&': '&amp;', "'": '&#x27;', '`': '&#x60;', '"': '&quot;', '<': '&lt;', '>': '&gt;' }[match]
+            });
+        }
+
+        async function fetchWaitlist(isManual = false) {
+            if (isManual) {
+                refreshBtn.disabled = true;
+                btnText.innerHTML = '<span class="spinner"></span> 取得中...';
+            }
+
+            try {
+                let data;
+                
+                // config.jsの設定値が空の場合の安全弁
+                if (!API_URL || API_URL === "") {
+                    await new Promise(resolve => setTimeout(resolve, 500)); 
+                    if (!isManual && previousWaitlistIds.length > 0 && Math.random() > 0.5) {
+                        data = JSON.parse(JSON.stringify(mockData));
+                        data.waitlist.push({
+                            "identifier": "test_" + Date.now(), "customer_name": "飛び込み 太郎", "points": 100, "coupons": []
+                        });
+                    } else {
+                        data = mockData;
+                    }
+                } else {
+                    const payload = { action: "get_waitlist", api_key: API_KEY };
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        console.error("[PWA Network Error]", { status: response.status, url: response.url });
+                        throw new Error(`HTTPエラー: ${response.status}`);
+                    }
+                    data = await response.json();
+                }
+                
+                if (data.status === "success") {
+                    renderWaitlist(data.waitlist);
+                    lastUpdatedText.textContent = `最終更新: ${formatTime(new Date())}`;
+                    if (isManual) showToast('最新の待機列を取得しました');
+                } else {
+                    console.error("[PWA API Error]", data);
+                    throw new Error(data.message || 'APIエラー');
+                }
+
+            } catch (error) {
+                console.error("[PWA Exception]", error);
+                if (isManual) showToast('取得失敗。ログを確認してください。', true);
+            } finally {
+                if (isManual) {
+                    refreshBtn.disabled = false;
+                    btnText.textContent = '手動更新';
+                }
+            }
+        }
+
+        function isBusinessHours() {
+            const currentHour = new Date().getHours();
+            return currentHour >= 10 && currentHour < 20;
+        }
+
+        function init() {
+            fetchWaitlist(false);
+            setInterval(() => {
+                if (isBusinessHours()) fetchWaitlist(false);
+            }, POLLING_INTERVAL_MS);
+        }
+
+        // ESモジュール内では onclick="fetchWaitlist(true)" が直接動かないためイベントリスナーを登録
+        refreshBtn.addEventListener('click', () => fetchWaitlist(true));
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
