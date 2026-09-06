@@ -19,6 +19,9 @@ export const APP_CONFIG = {
   GAS_WEB_APP_URL: "https://script.google.com/macros/s/AKfycbwI46bsdyeyzRo6Y9iTkzmNee_68bovwH9j4uFVuoBJd791PFgGIEXtIQ44vSOqT2Y-/exec",
 
   // 4. PWA用 閲覧専用キー（追加）
-  PWA_API_KEY: "read_PWA_TAS_mm_2026"
+  PWA_API_KEY: "read_PWA_TAS_mm_2026",
+
+  // 5.チェックイン専用キーへ差し替え
+  CUSTOMER_API_KEY: "CheckIn_TAS_app_2026"
 
 };

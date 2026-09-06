@@ -88,7 +88,7 @@ if (form) {
       // 🌟 キャッシュ対策とAPIキーを明記したペイロード
       const formData = {
         action: "register", 
-        api_key: "TimeSpace_Secure_2026_xyz", // 登録時も念のため付与
+        api_key: APP_CONFIG.CUSTOMER_API_KEY,
         name: document.getElementById('customer-name').value,
         kana: document.getElementById('customer-kana').value,
         email: document.getElementById('customer-email').value,
@@ -209,7 +209,7 @@ if (checkinBtn) {
       // 3. GASへ送信するデータ
       const formData = {
         action: "check_in",
-        api_key: "TimeSpace_Secure_2026_xyz",
+        api_key: APP_CONFIG.CUSTOMER_API_KEY,
         token: currentToken
       };
 
