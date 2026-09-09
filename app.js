@@ -144,6 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // 🌟アプリ起動時に次回の予約を自動取得する処理
+// 🌟アプリ起動時に次回の予約を自動取得する処理（タイムアウト監視機能追加版）
 async function loadNextReservation() {
   const reservationText = document.getElementById('next-reservation');
   if (!reservationText) return;
@@ -162,8 +163,17 @@ async function loadNextReservation() {
       return;
     }
 
+    // 🌟 【新規追加】8秒でタイムアウトさせるタイマーを設定
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
     const gasUrl = APP_CONFIG.GAS_WEB_APP_URL + "?token=" + encodeURIComponent(token);
-    const response = await fetch(gasUrl);
+    const response = await fetch(gasUrl, {
+      signal: controller.signal // 🌟 タイマーと通信を連動させる
+    });
+    
+    clearTimeout(timeoutId); // 通信が無事に終わればタイマーを解除
+    
     const result = await response.json();
 
     if (result.status === "success") {
@@ -172,10 +182,19 @@ async function loadNextReservation() {
       reservationText.textContent = "確認できませんでした";
     }
   } catch (error) {
-    console.error("予約取得エラー:", error);
-    reservationText.textContent = "通信エラー";
+    // 🌟 【新規追加】タイムアウトまたは切断された場合のエラー処理
+    if (error.name === 'AbortError' || error.message.includes('NetworkError')) {
+      console.warn("通信タイムアウトまたは切断");
+      // ユーザーに画面更新を促すテキストに変更
+      reservationText.innerHTML = "通信タイムアウト<br><span style='font-size:12px;text-decoration:underline;cursor:pointer;' onclick='location.reload()'>タップして再読み込み</span>";
+    } else {
+      console.error("予約取得エラー:", error);
+      reservationText.textContent = "通信エラー";
+    }
   }
 }
+
+
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', loadNextReservation);
