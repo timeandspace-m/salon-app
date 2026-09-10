@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>サロン通知設定</title>
+<title>tiMe and space</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 
@@ -38,14 +38,24 @@ h1 { font-family: 'Josefin Sans', 'Noto Sans JP', sans-serif; text-align: center
 .step-list li:last-child { margin-bottom: 0; }
 .step-list li::before { content: counter(step-counter); counter-increment: step-counter; position: absolute; left: 0; top: 0; width: 22px; height: 22px; background-color: var(--btn-color); color: #fff; border-radius: 50%; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
 
-/* 🌟 分割入力用フレックスボックス */
 .form-group { margin-bottom: 20px; }
-.flex-row { display: flex; gap: 10px; margin-bottom: 20px; }
-.flex-row .form-group { margin-bottom: 0; flex: 1; }
+label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500; }
 
-label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 500; }
-
-input[type="text"], input[type="email"], input[type="date"], select { width: 100%; padding: 12px 15px; font-size: 16px; font-family: 'Noto Sans JP', sans-serif; border: 1px solid var(--border-color); border-radius: 8px; background-color: #FAF9F8; color: var(--text-color); transition: all 0.3s ease; }
+/* 🌟 dateの幅崩れを修正: display:block と -webkit-appearance:none を追加 */
+input[type="text"], input[type="email"], input[type="date"], select { 
+    display: block;
+    width: 100%; 
+    padding: 12px 15px; 
+    font-size: 16px; 
+    font-family: 'Noto Sans JP', sans-serif; 
+    border: 1px solid var(--border-color); 
+    border-radius: 8px; 
+    background-color: #FAF9F8; 
+    color: var(--text-color); 
+    transition: all 0.3s ease;
+    -webkit-appearance: none;
+    appearance: none;
+}
 input:focus, select:focus { outline: none; border-color: var(--btn-color); background-color: #ffffff; }
 
 button { width: 100%; padding: 15px; font-size: 16px; font-weight: 500; letter-spacing: 2px; color: #fff; background-color: var(--btn-color); border: none; border-radius: 25px; cursor: pointer; margin-top: 10px; transition: background-color 0.3s ease; }
@@ -66,13 +76,11 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
 .info-card h3 { font-size: 14px; color: var(--text-color); margin: 0 0 15px 0; font-weight: 500; }
 #next-reservation { font-size: 18px; font-weight: bold; color: var(--btn-color); margin: 0; }
 
-/* 🌟 汎用モーダルと確認モーダル共通 */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.4); z-index: 2000; display: flex; justify-content: center; align-items: center; }
 .modal-content { background-color: #fff; padding: 25px 20px; border-radius: 12px; width: 85%; max-width: 320px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); text-align: center; }
 #modal-title { margin: 0 0 15px 0; font-size: 16px; color: var(--btn-color); border-bottom: 1px dashed var(--border-color); padding-bottom: 10px; }
 #modal-body { font-size: 14px; color: var(--text-color); text-align: left; line-height: 1.6; white-space: pre-wrap; margin-bottom: 20px; }
 
-/* 🌟 確認モーダル専用スタイル */
 .confirm-table { width: 100%; text-align: left; font-size: 14px; margin-bottom: 20px; border-collapse: collapse; }
 .confirm-table th { padding: 8px 0; color: var(--text-muted); font-weight: normal; border-bottom: 1px solid #eee; white-space: nowrap; }
 .confirm-table td { padding: 8px 0 8px 10px; font-weight: bold; border-bottom: 1px solid #eee; word-break: break-all; }
@@ -89,7 +97,6 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
 </head>
 <body>
 
-<!-- 既存のメッセージ用モーダル -->
 <div id="custom-modal" class="modal-overlay hidden">
   <div class="modal-content">
     <h3 id="modal-title"></h3>
@@ -98,7 +105,6 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
   </div>
 </div>
 
-<!-- 🌟 新規：登録前確認モーダル -->
 <div id="confirm-modal" class="modal-overlay hidden">
   <div class="modal-content">
     <h3 id="modal-title" style="margin-bottom: 15px; font-size: 16px; color: var(--text-main); border-bottom: 1px dashed var(--border-color); padding-bottom: 10px;">入力内容の確認</h3>
@@ -116,7 +122,6 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
 </div>
 
 <div class="container">
-<!-- インストールガイド等（既存まま） -->
 <div id="install-guide" class="hidden">
   <div class="guide-box">
     <div class="guide-icon">📱</div>
@@ -126,7 +131,6 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
 </div>
 
 <div id="app-content" class="hidden">
-  <!-- ホームタブ -->
   <div id="tab-home" class="tab-panel active">
     <div class="welcome-box">
       <h2>こんにちは！</h2>
@@ -141,35 +145,19 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
     </div>
   </div>
 
-  <!-- 通知設定タブ（フォーム改修） -->
   <div id="tab-config" class="tab-panel">
-    <h1>tiMe and space<br>ご予約リマインダー</h1>
+    <h1>tiMe and space<br>メンバー登録</h1>
     
     <form id="registration-form">
-      <!-- 🌟 姓名分割 -->
-      <div class="flex-row">
-        <div class="form-group">
-          <label>姓（苗字）</label>
-          <input type="text" id="customer-last-name" placeholder="山田" required>
-        </div>
-        <div class="form-group">
-          <label>名（名前）</label>
-          <input type="text" id="customer-first-name" placeholder="太郎" required>
-        </div>
+      <div class="form-group">
+        <label>お名前（フルネーム）</label>
+        <input type="text" id="customer-name" placeholder="山田 太郎" required>
+      </div>
+      <div class="form-group">
+        <label>フリガナ</label>
+        <input type="text" id="customer-kana" placeholder="ヤマダ タロウ" required>
       </div>
 
-      <div class="flex-row">
-        <div class="form-group">
-          <label>セイ（フリガナ）</label>
-          <input type="text" id="customer-last-kana" placeholder="ヤマダ" required>
-        </div>
-        <div class="form-group">
-          <label>メイ（フリガナ）</label>
-          <input type="text" id="customer-first-kana" placeholder="タロウ" required>
-        </div>
-      </div>
-
-      <!-- 🌟 生年月日へ変更 -->
       <div class="form-group">
         <label>生年月日</label>
         <input type="date" id="customer-dob" required>
@@ -184,7 +172,6 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
     </form>
   </div>
 
-  <!-- タブバー -->
   <nav class="tab-bar">
     <button type="button" class="tab-btn active" data-tab="tab-home"><span class="tab-icon">🏠</span><span class="tab-label">ホーム</span></button>
     <button type="button" class="tab-btn" data-tab="tab-config"><span class="tab-icon">⚙️</span><span class="tab-label">通知設定</span></button>
@@ -192,7 +179,6 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
 </div>
 </div>
 
-<!-- キャッシュバスティングのためにバージョンを更新 -->
-<script type="module" src="app.js?v=20260910"></script>
+<script type="module" src="app.js?v=20260901"></script>
 </body>
 </html>

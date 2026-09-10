@@ -2,7 +2,14 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebas
 import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 import { APP_CONFIG } from "./config.js";
 
-// 🌟通知タップで起動した際、メッセージを画面にポップアップ表示する処理
+// 入力値から空白を削除し、半角カタカナを全角に変換する正規化関数
+const sanitizeInput = (text) => {
+  if (!text) return "";
+  return text
+    .replace(/[\s\u3000]+/g, "") // 半角・全角スペースをすべて強制削除
+    .normalize('NFKC');          // 半角カタカナを全角へ変換
+};
+
 (function() {
   const urlParams = new URLSearchParams(window.location.search);
   const msgTitle = urlParams.get('msg_title');
@@ -49,51 +56,43 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// 🌟 登録データの一時保管用変数
 let pendingRegistrationData = null;
 
 const form = document.getElementById('registration-form');
 if (form) {
-  // 1. フォーム送信時：確認モーダルを表示する処理
   form.addEventListener('submit', (e) => {
     e.preventDefault(); 
     
-    // 🌟 姓と名、セイとメイを取得し、間に空白を一切入れずに結合（絶対仕様）
-    const lastName = document.getElementById('customer-last-name').value.trim();
-    const firstName = document.getElementById('customer-first-name').value.trim();
-    const lastKana = document.getElementById('customer-last-kana').value.trim();
-    const firstKana = document.getElementById('customer-first-kana').value.trim();
+    const rawName = document.getElementById('customer-name').value;
+    const rawKana = document.getElementById('customer-kana').value;
     
-    const combinedName = lastName + firstName;
-    const combinedKana = lastKana + firstKana;
+    // 🌟 送信データの直前で sanitizeInput 関数を適用
+    const cleanName = sanitizeInput(rawName);
+    const cleanKana = sanitizeInput(rawKana);
+    
     const email = document.getElementById('customer-email').value.trim();
     const dob = document.getElementById('customer-dob').value;
 
-    // 確認用モーダルにデータを流し込む
-    document.getElementById('conf-name').textContent = combinedName;
-    document.getElementById('conf-kana').textContent = combinedKana;
+    document.getElementById('conf-name').textContent = cleanName;
+    document.getElementById('conf-kana').textContent = cleanKana;
     document.getElementById('conf-dob').textContent = dob;
     document.getElementById('conf-email').textContent = email;
 
-    // 後で送信できるように変数に保持
     pendingRegistrationData = {
-      name: combinedName,
-      kana: combinedKana,
+      name: cleanName,
+      kana: cleanKana,
       email: email,
       birthday: dob
     };
 
-    // モーダルを表示
     document.getElementById('confirm-modal').classList.remove('hidden');
   });
 
-  // 2. モーダル内の「修正する」ボタン処理
   document.getElementById('confirm-cancel-btn').addEventListener('click', () => {
     document.getElementById('confirm-modal').classList.add('hidden');
     pendingRegistrationData = null;
   });
 
-  // 3. モーダル内の「送信する」ボタン処理（本送信）
   document.getElementById('confirm-submit-btn').addEventListener('click', async () => {
     if (!pendingRegistrationData) return;
 
@@ -163,7 +162,6 @@ if (form) {
   });
 }
 
-// 🌟画面下のタブを切り替える仕組み（既存のまま）
 document.addEventListener('DOMContentLoaded', () => {
   const tabBtns = document.querySelectorAll('.tab-btn');
   const tabPanels = document.querySelectorAll('.tab-panel');
@@ -182,7 +180,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// 🌟アプリ起動時に次回の予約を自動取得する処理（既存のまま）
 async function loadNextReservation() {
   const reservationText = document.getElementById('next-reservation');
   if (!reservationText) return;
@@ -220,7 +217,6 @@ if (document.readyState === 'loading') {
   loadNextReservation();
 }
 
-// 🌟 チェックインボタンの処理（既存のまま）
 const checkinBtn = document.getElementById('checkin-btn');
 const checkinMsg = document.getElementById('checkin-msg');
 
