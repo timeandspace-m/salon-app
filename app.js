@@ -6,8 +6,8 @@ import { APP_CONFIG } from "./config.js";
 const sanitizeInput = (text) => {
   if (!text) return "";
   return text
-    .replace(/[\s\u3000]+/g, "") // 半角・全角スペースをすべて強制削除
-    .normalize('NFKC');          // 半角カタカナを全角へ変換
+    .replace(/[\s\u3000]+/g, "")
+    .normalize('NFKC');
 };
 
 (function() {
@@ -66,7 +66,6 @@ if (form) {
     const rawName = document.getElementById('customer-name').value;
     const rawKana = document.getElementById('customer-kana').value;
     
-    // 🌟 送信データの直前で sanitizeInput 関数を適用
     const cleanName = sanitizeInput(rawName);
     const cleanKana = sanitizeInput(rawKana);
     
@@ -197,7 +196,14 @@ async function loadNextReservation() {
     }
 
     const gasUrl = APP_CONFIG.GAS_WEB_APP_URL + "?token=" + encodeURIComponent(token);
-    const response = await fetch(gasUrl);
+    
+    // 🌟【修正箇所】8秒のタイムアウト（AbortController）を実装
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+    const response = await fetch(gasUrl, { signal: controller.signal });
+    clearTimeout(timeoutId); // 通信成功時はタイマーを解除
+
     const result = await response.json();
 
     if (result.status === "success") {
@@ -207,7 +213,12 @@ async function loadNextReservation() {
     }
   } catch (error) {
     console.error("予約取得エラー:", error);
-    reservationText.textContent = "通信エラー";
+    // 🌟タイムアウトエラーと通常のネットワークエラーの出し分け
+    if (error.name === 'AbortError') {
+      reservationText.textContent = "通信タイムアウト";
+    } else {
+      reservationText.textContent = "通信エラー";
+    }
   }
 }
 
