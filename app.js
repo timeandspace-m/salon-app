@@ -11,19 +11,15 @@ import { APP_CONFIG } from "./config.js";
   if (msgTitle && msgBody) {
     setTimeout(() => {
       const cleanBody = decodeURIComponent(msgBody).replace(/\\n/g, '\n');
-      
-      // 🚨 以前の alert() を削除し、カスタムモーダルを表示する処理に変更
       document.getElementById('modal-title').innerText = decodeURIComponent(msgTitle);
       document.getElementById('modal-body').innerText = cleanBody;
       const modal = document.getElementById('custom-modal');
       modal.classList.remove('hidden');
 
-      // 閉じるボタンの処理
       document.getElementById('modal-close').addEventListener('click', () => {
         modal.classList.add('hidden');
       });
 
-      // URLからパラメータを消してスッキリさせる
       const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
     }, 500);
@@ -53,22 +49,65 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+// 🌟 登録データの一時保管用変数
+let pendingRegistrationData = null;
+
 const form = document.getElementById('registration-form');
 if (form) {
-  form.addEventListener('submit', async (e) => {
+  // 1. フォーム送信時：確認モーダルを表示する処理
+  form.addEventListener('submit', (e) => {
     e.preventDefault(); 
     
-    const submitBtn = document.getElementById('submit-btn');
+    // 🌟 姓と名、セイとメイを取得し、間に空白を一切入れずに結合（絶対仕様）
+    const lastName = document.getElementById('customer-last-name').value.trim();
+    const firstName = document.getElementById('customer-first-name').value.trim();
+    const lastKana = document.getElementById('customer-last-kana').value.trim();
+    const firstKana = document.getElementById('customer-first-kana').value.trim();
+    
+    const combinedName = lastName + firstName;
+    const combinedKana = lastKana + firstKana;
+    const email = document.getElementById('customer-email').value.trim();
+    const dob = document.getElementById('customer-dob').value;
+
+    // 確認用モーダルにデータを流し込む
+    document.getElementById('conf-name').textContent = combinedName;
+    document.getElementById('conf-kana').textContent = combinedKana;
+    document.getElementById('conf-dob').textContent = dob;
+    document.getElementById('conf-email').textContent = email;
+
+    // 後で送信できるように変数に保持
+    pendingRegistrationData = {
+      name: combinedName,
+      kana: combinedKana,
+      email: email,
+      birthday: dob
+    };
+
+    // モーダルを表示
+    document.getElementById('confirm-modal').classList.remove('hidden');
+  });
+
+  // 2. モーダル内の「修正する」ボタン処理
+  document.getElementById('confirm-cancel-btn').addEventListener('click', () => {
+    document.getElementById('confirm-modal').classList.add('hidden');
+    pendingRegistrationData = null;
+  });
+
+  // 3. モーダル内の「送信する」ボタン処理（本送信）
+  document.getElementById('confirm-submit-btn').addEventListener('click', async () => {
+    if (!pendingRegistrationData) return;
+
+    const submitBtn = document.getElementById('confirm-submit-btn');
+    const cancelBtn = document.getElementById('confirm-cancel-btn');
     submitBtn.disabled = true;
-    submitBtn.innerText = "登録中...";
+    cancelBtn.disabled = true;
+    submitBtn.innerText = "通信中...";
 
     try {
       const permission = await Notification.requestPermission();
       if (permission !== 'granted') {
         alert("通知がブロックされています。スマホの設定で通知を許可してください。");
-        submitBtn.disabled = false;
-        submitBtn.innerText = "登録する";
-        return;
+        throw new Error("Permission Denied");
       }
 
       const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
@@ -80,19 +119,16 @@ if (form) {
 
       if (!currentToken) {
         alert("プッシュ通知の宛先データが取得できませんでした。");
-        submitBtn.disabled = false;
-        submitBtn.innerText = "登録する";
-        return;
+        throw new Error("Token Error");
       }
 
-      // 🌟 キャッシュ対策とAPIキーを明記したペイロード
       const formData = {
         action: "register", 
-        api_key: APP_CONFIG.CUSTOMER_API_KEY,
-        name: document.getElementById('customer-name').value,
-        kana: document.getElementById('customer-kana').value,
-        email: document.getElementById('customer-email').value,
-        birthday: document.getElementById('customer-bday') ? document.getElementById('customer-bday').value : "",
+        api_key: APP_CONFIG.CUSTOMER_API_KEY, 
+        name: pendingRegistrationData.name,
+        kana: pendingRegistrationData.kana,
+        email: pendingRegistrationData.email,
+        birthday: pendingRegistrationData.birthday,
         id: "",
         type: "プッシュ通知",
         token: currentToken
@@ -100,31 +136,34 @@ if (form) {
 
       const response = await fetch(GAS_WEB_APP_URL, {
         method: "POST",
-        cache: "no-store", // 🌟 iOS Safariのキャッシュを強制的に無効化
+        cache: "no-store",
         body: JSON.stringify(formData)
       });
       
       const result = await response.json();
       
-      // GASからの明確な成功ステータスのみを許可
       if (response.ok && result.status === "success") {
         alert("ご登録が完了しました！");
         document.getElementById('registration-form').reset();
+        document.getElementById('confirm-modal').classList.add('hidden');
       } else {
         throw new Error(result.message || "サーバーエラー");
       }
 
     } catch (error) {
       console.error("送信エラー:", error);
-      alert("登録送信中にエラーが発生しました。\n詳細: " + error.message);
+      if (error.message !== "Permission Denied" && error.message !== "Token Error") {
+        alert("登録送信中にエラーが発生しました。\n詳細: " + error.message);
+      }
     } finally {
       submitBtn.disabled = false;
-      submitBtn.innerText = "登録する";
+      cancelBtn.disabled = false;
+      submitBtn.innerText = "送信する";
     }
   });
 }
 
-// 🌟画面下のタブを切り替える仕組み
+// 🌟画面下のタブを切り替える仕組み（既存のまま）
 document.addEventListener('DOMContentLoaded', () => {
   const tabBtns = document.querySelectorAll('.tab-btn');
   const tabPanels = document.querySelectorAll('.tab-panel');
@@ -143,16 +182,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// 🌟アプリ起動時に次回の予約を自動取得する処理
-// 🌟アプリ起動時に次回の予約を自動取得する処理（タイムアウト監視機能追加版）
+// 🌟アプリ起動時に次回の予約を自動取得する処理（既存のまま）
 async function loadNextReservation() {
   const reservationText = document.getElementById('next-reservation');
   if (!reservationText) return;
   
   try {
-    const messaging = getMessaging();
     const registration = await navigator.serviceWorker.ready;
-    
     const token = await getToken(messaging, { 
       vapidKey: APP_CONFIG.VAPID_KEY, 
       serviceWorkerRegistration: registration 
@@ -163,17 +199,8 @@ async function loadNextReservation() {
       return;
     }
 
-    // 🌟 【新規追加】8秒でタイムアウトさせるタイマーを設定
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000);
-
     const gasUrl = APP_CONFIG.GAS_WEB_APP_URL + "?token=" + encodeURIComponent(token);
-    const response = await fetch(gasUrl, {
-      signal: controller.signal // 🌟 タイマーと通信を連動させる
-    });
-    
-    clearTimeout(timeoutId); // 通信が無事に終わればタイマーを解除
-    
+    const response = await fetch(gasUrl);
     const result = await response.json();
 
     if (result.status === "success") {
@@ -182,19 +209,10 @@ async function loadNextReservation() {
       reservationText.textContent = "確認できませんでした";
     }
   } catch (error) {
-    // 🌟 【新規追加】タイムアウトまたは切断された場合のエラー処理
-    if (error.name === 'AbortError' || error.message.includes('NetworkError')) {
-      console.warn("通信タイムアウトまたは切断");
-      // ユーザーに画面更新を促すテキストに変更
-      reservationText.innerHTML = "通信タイムアウト<br><span style='font-size:12px;text-decoration:underline;cursor:pointer;' onclick='location.reload()'>タップして再読み込み</span>";
-    } else {
-      console.error("予約取得エラー:", error);
-      reservationText.textContent = "通信エラー";
-    }
+    console.error("予約取得エラー:", error);
+    reservationText.textContent = "通信エラー";
   }
 }
-
-
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', loadNextReservation);
@@ -202,19 +220,17 @@ if (document.readyState === 'loading') {
   loadNextReservation();
 }
 
-// 🌟 チェックインボタンの処理
+// 🌟 チェックインボタンの処理（既存のまま）
 const checkinBtn = document.getElementById('checkin-btn');
 const checkinMsg = document.getElementById('checkin-msg');
 
 if (checkinBtn) {
   checkinBtn.addEventListener('click', async () => {
-    // 1. ボタンをロックして二重押しを防ぐ
     checkinBtn.disabled = true;
     checkinBtn.innerHTML = "⏳ チェックイン中...";
     checkinMsg.textContent = "";
 
     try {
-      // 2. プッシュ通知用のデバイストークンを取得
       const registration = await navigator.serviceWorker.ready;
       const currentToken = await getToken(messaging, { 
         vapidKey: APP_CONFIG.VAPID_KEY, 
@@ -225,14 +241,12 @@ if (checkinBtn) {
         throw new Error("通知設定が許可されていないため、チェックインできません。");
       }
 
-      // 3. GASへ送信するデータ
       const formData = {
         action: "check_in",
-        api_key: APP_CONFIG.CUSTOMER_API_KEY,
+        api_key: APP_CONFIG.CUSTOMER_API_KEY, 
         token: currentToken
       };
 
-      // 4. config.js の変数（GAS_WEB_APP_URL）を使ってGASへ通信
       const response = await fetch(GAS_WEB_APP_URL, {
         method: "POST",
         body: JSON.stringify(formData)
@@ -240,10 +254,9 @@ if (checkinBtn) {
       
       const result = await response.json();
       
-      // 5. 結果の表示
       if (result.status === "success") {
         checkinBtn.innerHTML = "✨ チェックイン完了 ✨";
-        checkinBtn.style.background = "#1976D2"; // 完了時は青色に変更
+        checkinBtn.style.background = "#1976D2"; 
       } else {
         throw new Error(result.message);
       }

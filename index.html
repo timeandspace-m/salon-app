@@ -7,8 +7,6 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 
-<!-- 🌟 mobileSelectのCSSは完全に削除しました -->
-
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap');
 
@@ -18,6 +16,8 @@
 --border-color: #C0C8D0;
 --btn-color: #5D6C7B;
 --btn-hover: #4B5865;
+--primary-color: #3498db;
+--danger-color: #e74c3c;
 }
 
 * { box-sizing: border-box; }
@@ -37,17 +37,15 @@ h1 { font-family: 'Josefin Sans', 'Noto Sans JP', sans-serif; text-align: center
 .step-list li { position: relative; padding-left: 32px; margin-bottom: 15px; font-size: 13.5px; line-height: 1.5; color: var(--text-color); }
 .step-list li:last-child { margin-bottom: 0; }
 .step-list li::before { content: counter(step-counter); counter-increment: step-counter; position: absolute; left: 0; top: 0; width: 22px; height: 22px; background-color: var(--btn-color); color: #fff; border-radius: 50%; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
-.step-list strong { color: var(--btn-color); }
-.inline-icon { width: 1.3em; height: 1.3em; vertical-align: -0.25em; margin: 0 2px; stroke: var(--btn-color); }
-.guide-note { font-size: 11px; color: #888; margin-top: 20px; }
 
-.info-text { background-color: #FAF9F8; border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; font-size: 13px; line-height: 1.6; margin-bottom: 25px; color: var(--text-color); }
-.info-text .highlight { font-weight: 500; color: var(--btn-color); }
-.info-text .small-text { font-size: 11px; color: #888; display: block; margin-top: 5px; }
+/* 🌟 分割入力用フレックスボックス */
 .form-group { margin-bottom: 20px; }
-label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500; }
+.flex-row { display: flex; gap: 10px; margin-bottom: 20px; }
+.flex-row .form-group { margin-bottom: 0; flex: 1; }
 
-input[type="text"], input[type="email"], select { width: 100%; padding: 12px 15px; font-size: 16px; font-family: 'Noto Sans JP', sans-serif; border: 1px solid var(--border-color); border-radius: 8px; background-color: #FAF9F8; color: var(--text-color); transition: all 0.3s ease; }
+label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 500; }
+
+input[type="text"], input[type="email"], input[type="date"], select { width: 100%; padding: 12px 15px; font-size: 16px; font-family: 'Noto Sans JP', sans-serif; border: 1px solid var(--border-color); border-radius: 8px; background-color: #FAF9F8; color: var(--text-color); transition: all 0.3s ease; }
 input:focus, select:focus { outline: none; border-color: var(--btn-color); background-color: #ffffff; }
 
 button { width: 100%; padding: 15px; font-size: 16px; font-weight: 500; letter-spacing: 2px; color: #fff; background-color: var(--btn-color); border: none; border-radius: 25px; cursor: pointer; margin-top: 10px; transition: background-color 0.3s ease; }
@@ -59,7 +57,6 @@ button:disabled { background-color: #ccc; cursor: not-allowed; }
 .tab-panel.active { display: block; }
 .tab-bar { position: fixed; bottom: 0; left: 0; width: 100%; background-color: #ffffff; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); border-top: 1px solid var(--border-color); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
 button.tab-btn { background-color: transparent; color: #a49e98; width: auto; padding: 5px 15px; margin: 0; border-radius: 0; font-size: 11px; letter-spacing: normal; display: flex; flex-direction: column; align-items: center; transition: color 0.3s ease; }
-button.tab-btn:hover { background-color: transparent; }
 button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
 .tab-icon { font-size: 22px; margin-bottom: 4px; }
 #app-content { padding-bottom: 80px; }
@@ -68,141 +65,134 @@ button.tab-btn.active { color: var(--btn-color); font-weight: bold; }
 .info-card { background-color: #FAF9F8; border: 1px solid var(--border-color); border-radius: 12px; padding: 25px 20px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
 .info-card h3 { font-size: 14px; color: var(--text-color); margin: 0 0 15px 0; font-weight: 500; }
 #next-reservation { font-size: 18px; font-weight: bold; color: var(--btn-color); margin: 0; }
-.hp-iframe { width: 100%; height: 65vh; border: 1px solid var(--border-color); border-radius: 8px; }
-#tab-hp.active { position: fixed; top: 0; left: 0; width: 100vw; height: calc(100vh - 62px - env(safe-area-inset-bottom)); z-index: 999; background-color: #ffffff; }
-#tab-hp h2 { display: none; }
-#tab-hp .hp-iframe { width: 100%; height: 100%; border: none; border-radius: 0; }
 
-#custom-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.4); z-index: 2000; display: flex; justify-content: center; align-items: center; }
-#custom-modal.hidden { display: none !important; }
+/* 🌟 汎用モーダルと確認モーダル共通 */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.4); z-index: 2000; display: flex; justify-content: center; align-items: center; }
 .modal-content { background-color: #fff; padding: 25px 20px; border-radius: 12px; width: 85%; max-width: 320px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); text-align: center; }
 #modal-title { margin: 0 0 15px 0; font-size: 16px; color: var(--btn-color); border-bottom: 1px dashed var(--border-color); padding-bottom: 10px; }
 #modal-body { font-size: 14px; color: var(--text-color); text-align: left; line-height: 1.6; white-space: pre-wrap; margin-bottom: 20px; }
-#modal-close { margin-top: 0; padding: 10px; font-size: 14px; }
+
+/* 🌟 確認モーダル専用スタイル */
+.confirm-table { width: 100%; text-align: left; font-size: 14px; margin-bottom: 20px; border-collapse: collapse; }
+.confirm-table th { padding: 8px 0; color: var(--text-muted); font-weight: normal; border-bottom: 1px solid #eee; white-space: nowrap; }
+.confirm-table td { padding: 8px 0 8px 10px; font-weight: bold; border-bottom: 1px solid #eee; word-break: break-all; }
+.modal-btn-group { display: flex; flex-direction: column; gap: 10px; }
+.modal-btn-group button { margin: 0; padding: 12px; border-radius: 25px; font-size: 15px; font-weight: bold; }
+.btn-submit { background: linear-gradient(135deg, #3498db, #2980b9); }
+.btn-cancel { background-color: #FAF9F8; color: var(--text-muted); border: 1px solid var(--border-color); }
 
 .checkin-container { text-align: center; margin: 30px auto; padding: 0 20px; }
 .checkin-btn { background: linear-gradient(135deg, #4CAF50, #2E7D32); color: white; border: none; border-radius: 50px; padding: 16px 32px; font-size: 18px; font-weight: bold; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); cursor: pointer; width: 100%; max-width: 300px; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 10px; }
-.checkin-btn:active { transform: translateY(3px); box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); }
 .checkin-btn:disabled { background: #BDBDBD; box-shadow: none; transform: none; cursor: not-allowed; }
 .checkin-msg { font-size: 14px; color: #d32f2f; margin-top: 10px; min-height: 20px; }
 </style>
 </head>
 <body>
-<div id="custom-modal" class="hidden">
-<div class="modal-content">
-<h3 id="modal-title"></h3>
-<p id="modal-body"></p>
-<button id="modal-close">閉じる</button>
+
+<!-- 既存のメッセージ用モーダル -->
+<div id="custom-modal" class="modal-overlay hidden">
+  <div class="modal-content">
+    <h3 id="modal-title"></h3>
+    <p id="modal-body"></p>
+    <button id="modal-close">閉じる</button>
+  </div>
 </div>
+
+<!-- 🌟 新規：登録前確認モーダル -->
+<div id="confirm-modal" class="modal-overlay hidden">
+  <div class="modal-content">
+    <h3 id="modal-title" style="margin-bottom: 15px; font-size: 16px; color: var(--text-main); border-bottom: 1px dashed var(--border-color); padding-bottom: 10px;">入力内容の確認</h3>
+    <table class="confirm-table">
+      <tr><th>お名前</th><td id="conf-name"></td></tr>
+      <tr><th>フリガナ</th><td id="conf-kana"></td></tr>
+      <tr><th>生年月日</th><td id="conf-dob"></td></tr>
+      <tr><th>メール</th><td id="conf-email"></td></tr>
+    </table>
+    <div class="modal-btn-group">
+      <button id="confirm-submit-btn" class="btn-submit">送信する</button>
+      <button id="confirm-cancel-btn" class="btn-cancel">修正する（閉じる）</button>
+    </div>
+  </div>
 </div>
 
 <div class="container">
+<!-- インストールガイド等（既存まま） -->
 <div id="install-guide" class="hidden">
-<div class="guide-box">
-<div class="guide-icon">📱</div>
-<h1>tiMe and space<br>メンバー登録</h1>
-<p class="guide-desc">こちらはアプリ専用のシステムです。<br>確実にお知らせをお届けするため、<br>ホーム画面に追加してご利用ください。</p>
-<div id="ios-guide" class="guide-step hidden">
-<div class="os-title">iPhoneをご利用の方</div>
-<ol class="step-list">
-<li>画面の <strong>共有ボタン</strong> から共有をタップ</li>
-<li>一覧から <strong>「ホーム画面に追加」</strong> を選択</li>
-<li><strong>「webアプリとして開く」をオン</strong> にして追加</li>
-</ol>
-</div>
-<div id="android-guide" class="guide-step hidden">
-<div class="os-title">Androidをご利用の方</div>
-<ol class="step-list">
-<li>アドレスバー付近の <strong>メニューボタン</strong> をタップ</li>
-<li>一覧から <strong>「ホーム画面に追加」から「インストール」や「インストールしてショートカットを作成」でアプリを選択</strong> を選択</li>
-</ol>
-</div>
-</div>
+  <div class="guide-box">
+    <div class="guide-icon">📱</div>
+    <h1>tiMe and space<br>メンバー登録</h1>
+    <p class="guide-desc">こちらはアプリ専用のシステムです。<br>ホーム画面に追加してご利用ください。</p>
+  </div>
 </div>
 
 <div id="app-content" class="hidden">
-<div id="tab-home" class="tab-panel active">
-<div class="welcome-box">
-<h2>こんにちは！</h2>
-<p class="note">いつも tiMe and space をご利用いただき<br>ありがとうございます。</p>
-</div>
-<div class="info-card">
-<h3>📅 ご予約日時</h3>
-<p id="next-reservation">確認中...</p>
-</div>
-<div class="checkin-container">
-<button id="checkin-btn" class="checkin-btn">
-<span class="icon">✅</span> お店にチェックイン
-</button>
-<p id="checkin-msg" class="checkin-msg"></p>
-</div>
-</div>
-<div id="tab-hp" class="tab-panel">
-<h2 style="text-align: center; font-size: 18px; margin-bottom: 15px;">Salon HP</h2>
-<iframe src="https://timeandspace.sakura.ne.jp/" class="hp-iframe" title="サロンホームページ"></iframe>
-</div>
+  <!-- ホームタブ -->
+  <div id="tab-home" class="tab-panel active">
+    <div class="welcome-box">
+      <h2>こんにちは！</h2>
+    </div>
+    <div class="info-card">
+      <h3>📅 ご予約日時</h3>
+      <p id="next-reservation">確認中...</p>
+    </div>
+    <div class="checkin-container">
+      <button id="checkin-btn" class="checkin-btn"><span class="icon">✅</span> お店にチェックイン</button>
+      <p id="checkin-msg" class="checkin-msg"></p>
+    </div>
+  </div>
 
-<div id="tab-config" class="tab-panel">
-<h1>tiMe and space<br>ご予約リマインダー</h1>
-<p class="note">ご予約日の前日と当日に、確認のお知らせをお届けします。</p>
+  <!-- 通知設定タブ（フォーム改修） -->
+  <div id="tab-config" class="tab-panel">
+    <h1>tiMe and space<br>ご予約リマインダー</h1>
+    
+    <form id="registration-form">
+      <!-- 🌟 姓名分割 -->
+      <div class="flex-row">
+        <div class="form-group">
+          <label>姓（苗字）</label>
+          <input type="text" id="customer-last-name" placeholder="山田" required>
+        </div>
+        <div class="form-group">
+          <label>名（名前）</label>
+          <input type="text" id="customer-first-name" placeholder="太郎" required>
+        </div>
+      </div>
 
-<form id="registration-form">
-<div class="form-group">
-<label>お名前（フルネーム）</label>
-<input type="text" id="customer-name" required>
-</div>
-<div class="form-group">
-<label>フリガナ</label>
-<input type="text" id="customer-kana" required>
-</div>
-<div class="form-group">
-<label>メールアドレス</label>
-<input type="email" id="customer-email" required>
-</div>
+      <div class="flex-row">
+        <div class="form-group">
+          <label>セイ（フリガナ）</label>
+          <input type="text" id="customer-last-kana" placeholder="ヤマダ" required>
+        </div>
+        <div class="form-group">
+          <label>メイ（フリガナ）</label>
+          <input type="text" id="customer-first-kana" placeholder="タロウ" required>
+        </div>
+      </div>
 
-<!-- 🌟 mobileSelectを完全に破棄し、HTML標準のselectに統一 (v7_Native_Final) -->
-<div class="form-group">
-<label>誕生月 <span style="font-size: 11px; color: #008000; font-weight: normal;">(v7)</span></label>
-<select id="customer-bday" required style="cursor: pointer; text-align: center;">
-  <option value="" disabled selected>タップして選択</option>
-  <option value="1月">1月</option>
-  <option value="2月">2月</option>
-  <option value="3月">3月</option>
-  <option value="4月">4月</option>
-  <option value="5月">5月</option>
-  <option value="6月">6月</option>
-  <option value="7月">7月</option>
-  <option value="8月">8月</option>
-  <option value="9月">9月</option>
-  <option value="10月">10月</option>
-  <option value="11月">11月</option>
-  <option value="12月">12月</option>
-</select>
-</div>
+      <!-- 🌟 生年月日へ変更 -->
+      <div class="form-group">
+        <label>生年月日</label>
+        <input type="date" id="customer-dob" required>
+      </div>
 
-<button type="submit" id="submit-btn">登録する</button>
-</form>
-</div>
+      <div class="form-group">
+        <label>メールアドレス</label>
+        <input type="email" id="customer-email" required>
+      </div>
 
-<nav class="tab-bar">
-<button type="button" class="tab-btn active" data-tab="tab-home">
-<span class="tab-icon">🏠</span>
-<span class="tab-label">ホーム</span>
-</button>
-<button type="button" class="tab-btn" data-tab="tab-hp">
-<span class="tab-icon">🌐</span>
-<span class="tab-label">HP</span>
-</button>
-<button type="button" class="tab-btn" data-tab="tab-config">
-<span class="tab-icon">⚙️</span>
-<span class="tab-label">通知設定</span>
-</button>
-</nav>
+      <button type="submit" id="initial-submit-btn">確認画面へ進む</button>
+    </form>
+  </div>
+
+  <!-- タブバー -->
+  <nav class="tab-bar">
+    <button type="button" class="tab-btn active" data-tab="tab-home"><span class="tab-icon">🏠</span><span class="tab-label">ホーム</span></button>
+    <button type="button" class="tab-btn" data-tab="tab-config"><span class="tab-icon">⚙️</span><span class="tab-label">通知設定</span></button>
+  </nav>
 </div>
 </div>
 
-<!-- 🌟 mobileSelectのJSファイル読み込み、および初期化スクリプトは完全に削除しました -->
-
-<script type="module" src="app.js?v=20260906"></script>
+<!-- キャッシュバスティングのためにバージョンを更新 -->
+<script type="module" src="app.js?v=20260910"></script>
 </body>
 </html>
