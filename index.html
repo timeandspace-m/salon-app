@@ -41,10 +41,13 @@ h1 { font-family: 'Josefin Sans', 'Noto Sans JP', sans-serif; text-align: center
 .form-group { margin-bottom: 20px; }
 label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500; }
 
-/* 🌟 dateの幅崩れを修正: display:block と -webkit-appearance:none を追加 */
+/* 🌟 dateの幅崩れを修正: marginリセットとmin-widthを追加 */
 input[type="text"], input[type="email"], input[type="date"], select { 
     display: block;
     width: 100%; 
+    min-width: 100%;
+    margin: 0;
+    box-sizing: border-box;
     padding: 12px 15px; 
     font-size: 16px; 
     font-family: 'Noto Sans JP', sans-serif; 
@@ -56,6 +59,7 @@ input[type="text"], input[type="email"], input[type="date"], select {
     -webkit-appearance: none;
     appearance: none;
 }
+
 input:focus, select:focus { outline: none; border-color: var(--btn-color); background-color: #ffffff; }
 
 button { width: 100%; padding: 15px; font-size: 16px; font-weight: 500; letter-spacing: 2px; color: #fff; background-color: var(--btn-color); border: none; border-radius: 25px; cursor: pointer; margin-top: 10px; transition: background-color 0.3s ease; }
