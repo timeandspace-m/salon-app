@@ -14,6 +14,9 @@ const sanitizeInput = (text) => {
   const urlParams = new URLSearchParams(window.location.search);
   const msgTitle = urlParams.get('msg_title');
   const msgBody = urlParams.get('msg_body');
+  
+  const calStart = urlParams.get('cal_start');
+  const calEnd = urlParams.get('cal_end');
 
   if (msgTitle && msgBody) {
     setTimeout(() => {
@@ -21,6 +24,28 @@ const sanitizeInput = (text) => {
       document.getElementById('modal-title').innerText = decodeURIComponent(msgTitle);
       document.getElementById('modal-body').innerText = cleanBody;
       const modal = document.getElementById('custom-modal');
+      const closeBtn = document.getElementById('modal-close');
+
+      const existingCalBtn = document.getElementById('modal-cal-btn');
+      if (existingCalBtn) {
+        existingCalBtn.remove();
+      }
+
+      if (calStart && calEnd) {
+        const calBtn = document.createElement('button');
+        calBtn.id = 'modal-cal-btn';
+        calBtn.innerText = '📅 カレンダーに登録する';
+        calBtn.style.marginBottom = '10px';
+        calBtn.style.background = 'linear-gradient(135deg, #f39c12, #d35400)';
+        
+        calBtn.addEventListener('click', () => {
+          const calUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('サロン予約')}&dates=${calStart}/${calEnd}`;
+          window.open(calUrl, '_blank');
+        });
+        
+        closeBtn.parentNode.insertBefore(calBtn, closeBtn);
+      }
+
       modal.classList.remove('hidden');
 
       document.getElementById('modal-close').addEventListener('click', () => {
@@ -135,6 +160,7 @@ if (form) {
       const response = await fetch(GAS_WEB_APP_URL, {
         method: "POST",
         cache: "no-store",
+        headers: { 'Content-Type': 'text/plain' }, // ★追加：CORSエラー回避用ヘッダ
         body: JSON.stringify(formData)
       });
       
@@ -197,12 +223,11 @@ async function loadNextReservation() {
 
     const gasUrl = APP_CONFIG.GAS_WEB_APP_URL + "?token=" + encodeURIComponent(token);
     
-    // 🌟【修正箇所】8秒のタイムアウト（AbortController）を実装
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000);
 
     const response = await fetch(gasUrl, { signal: controller.signal });
-    clearTimeout(timeoutId); // 通信成功時はタイマーを解除
+    clearTimeout(timeoutId);
 
     const result = await response.json();
 
@@ -213,12 +238,14 @@ async function loadNextReservation() {
     }
   } catch (error) {
     console.error("予約取得エラー:", error);
-    // 🌟タイムアウトエラーと通常のネットワークエラーの出し分け
-    if (error.name === 'AbortError') {
-      reservationText.textContent = "通信タイムアウト";
-    } else {
-      reservationText.textContent = "通信エラー";
-    }
+    reservationText.textContent = error.name === 'AbortError' ? "通信タイムアウト" : "通信エラー";
+    
+    // エラー時にDOM操作で安全にリロードボタンを生成・追加
+    const reloadBtn = document.createElement('div');
+    reloadBtn.innerHTML = '<span>🔄 再読み込み</span>';
+    reloadBtn.style.cssText = 'font-size: 13px; color: #3498db; text-decoration: underline; cursor: pointer; margin-top: 8px;';
+    reloadBtn.addEventListener('click', () => window.location.reload());
+    reservationText.appendChild(reloadBtn);
   }
 }
 
@@ -256,6 +283,7 @@ if (checkinBtn) {
 
       const response = await fetch(GAS_WEB_APP_URL, {
         method: "POST",
+        headers: { 'Content-Type': 'text/plain' }, // ★追加：CORSエラー回避用ヘッダ
         body: JSON.stringify(formData)
       });
       
