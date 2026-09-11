@@ -39,7 +39,7 @@ const sanitizeInput = (text) => {
         calBtn.style.background = 'linear-gradient(135deg, #f39c12, #d35400)';
         
         calBtn.addEventListener('click', () => {
-          const calUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('サロン予約')}&dates=${calStart}/${calEnd}`;
+          const calUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('tiMe and space')}&dates=${calStart}/${calEnd}`;
           window.open(calUrl, '_blank');
         });
         
