@@ -27,3 +27,37 @@ messaging.onBackgroundMessage((payload) => {
   // ここに書かれていた「return self.registration.showNotification(...)」の数行を削除しました。
   // これにより、Firebaseの自動通知機能だけが働くようになり、2重送信を100%防止します。
 });
+
+self.addEventListener('notificationclick', function(event) {
+  // 1. 通知のクローズ
+  event.notification.close();
+
+  // 2. URLの抽出
+  const notificationData = event.notification.data || {};
+  // Firebaseのペイロード構造を網羅的に確認し、パラメータ付きURLを安全に抽出
+  const targetUrl = notificationData.url || 
+                    notificationData.link || 
+                    (notificationData.FCM_MSG && notificationData.FCM_MSG.notification ? notificationData.FCM_MSG.notification.click_action : '/');
+
+  // 3 & 4. 既存ウィンドウの検索・リロード、または新規ウィンドウの展開
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clientList) {
+      for (let i = 0; i < clientList.length; i++) {
+        const client = clientList[i];
+        // 既存のウィンドウが存在する場合
+        if (client.url && 'focus' in client) {
+          return client.focus().then(function(focusedClient) {
+            if (focusedClient && 'navigate' in focusedClient) {
+              // 抽出したURLを用いて強制的に画面遷移（パラメータ再読み込み）
+              return focusedClient.navigate(targetUrl);
+            }
+          });
+        }
+      }
+      // 既存のウィンドウが存在しない（タスクキル状態）場合
+      if (clients.openWindow) {
+        return clients.openWindow(targetUrl);
+      }
+    })
+  );
+});
