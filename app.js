@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
+import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 import { APP_CONFIG } from "./config.js";
 
 // 入力値から空白を削除し、半角カタカナを全角に変換する正規化関数
@@ -61,6 +61,101 @@ const sanitizeInput = (text) => {
 const app = initializeApp(APP_CONFIG.FIREBASE_CONFIG);
 const messaging = getMessaging(app);
 const GAS_WEB_APP_URL = APP_CONFIG.GAS_WEB_APP_URL;
+
+// =============================================================
+// アプリ表示中（フォアグラウンド）の通知受信
+// =============================================================
+onMessage(messaging, (payload) => {
+  console.log('[Foreground] 通知を受信しました', payload);
+
+  const title =
+    payload.notification && payload.notification.title
+      ? payload.notification.title
+      : "お知らせ";
+
+  const body =
+    payload.notification && payload.notification.body
+      ? payload.notification.body
+      : "";
+
+  // GASから送られてきたパラメータ付きURL
+  const targetUrl =
+    (payload.data && payload.data.url)
+      ? payload.data.url
+      : "";
+
+  let calStart = null;
+  let calEnd = null;
+
+  // URLにカレンダー日時が入っていれば取得
+  if (targetUrl) {
+    try {
+      const parsedUrl = new URL(targetUrl, window.location.href);
+
+      calStart = parsedUrl.searchParams.get('cal_start');
+      calEnd = parsedUrl.searchParams.get('cal_end');
+
+    } catch (error) {
+      console.warn(
+        '[Foreground] 通知URLの解析に失敗しました',
+        error
+      );
+    }
+  }
+
+  const modal = document.getElementById('custom-modal');
+  const modalTitle = document.getElementById('modal-title');
+  const modalBody = document.getElementById('modal-body');
+  const closeBtn = document.getElementById('modal-close');
+
+  if (!modal || !modalTitle || !modalBody || !closeBtn) {
+    console.error('[Foreground] 通知モーダルが見つかりません');
+    return;
+  }
+
+  // 通知内容を表示
+  modalTitle.innerText = title;
+  modalBody.innerText = body;
+
+  // 前の通知で作ったカレンダーボタンが残っていれば削除
+  const existingCalBtn = document.getElementById('modal-cal-btn');
+
+  if (existingCalBtn) {
+    existingCalBtn.remove();
+  }
+
+  // 次回予約日時がある通知だけカレンダーボタンを表示
+  if (calStart && calEnd) {
+
+    const calBtn = document.createElement('button');
+
+    calBtn.id = 'modal-cal-btn';
+    calBtn.innerText = '📅 カレンダーに登録する';
+    calBtn.style.marginBottom = '10px';
+    calBtn.style.background =
+      'linear-gradient(135deg, #f39c12, #d35400)';
+
+    calBtn.addEventListener('click', () => {
+
+      const calUrl =
+        `https://www.google.com/calendar/render?action=TEMPLATE` +
+        `&text=${encodeURIComponent('tiMe and space')}` +
+        `&dates=${calStart}/${calEnd}`;
+
+      window.open(calUrl, '_blank');
+    });
+
+    closeBtn.parentNode.insertBefore(calBtn, closeBtn);
+  }
+
+  // アプリを見ている最中なのでOS通知ではなく、
+  // その場でアプリ内モーダルを表示
+  modal.classList.remove('hidden');
+
+  closeBtn.onclick = () => {
+    modal.classList.add('hidden');
+  };
+});
 
 document.addEventListener("DOMContentLoaded", () => {
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
