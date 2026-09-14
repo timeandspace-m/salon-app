@@ -59,8 +59,6 @@ self.addEventListener('notificationclick', function(event) {
 importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js');
 
-importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js');
 
 // 💡 【追加】古い受信機を強制的に破棄して、新しい仕組みへ一瞬で切り替える魔法のコード
 self.addEventListener('install', (event) => {
