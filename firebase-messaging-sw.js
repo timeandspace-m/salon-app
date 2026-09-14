@@ -1,3 +1,64 @@
+// =============================================================
+// 通知タップ時の独自処理
+// ※ Firebaseライブラリを読み込む前に登録する
+// =============================================================
+self.addEventListener('notificationclick', function(event) {
+
+  // Firebase側の標準クリック処理をここでは実行させない
+  event.stopImmediatePropagation();
+
+  event.notification.close();
+
+  const notificationData = event.notification.data || {};
+  const fcmMsg = notificationData.FCM_MSG || {};
+
+  // GASから送信したパラメータ付きURLを取得
+  const targetUrl =
+    (fcmMsg.fcmOptions && fcmMsg.fcmOptions.link) ||
+    (fcmMsg.data && fcmMsg.data.url) ||
+    notificationData.url ||
+    notificationData.link ||
+    (fcmMsg.notification && fcmMsg.notification.click_action) ||
+    '/';
+
+  event.waitUntil(
+    clients.matchAll({
+      type: 'window',
+      includeUncontrolled: true
+    }).then(function(clientList) {
+
+      // すでにPWAが開いている場合
+      for (let i = 0; i < clientList.length; i++) {
+        const client = clientList[i];
+
+        if (client.url && 'navigate' in client) {
+
+          // パラメータ付きURLへ実際に画面遷移させる
+          return client.navigate(targetUrl).then(function(navigatedClient) {
+
+            if (navigatedClient && 'focus' in navigatedClient) {
+              return navigatedClient.focus();
+            }
+
+            if ('focus' in client) {
+              return client.focus();
+            }
+          });
+        }
+      }
+
+      // PWAが完全に閉じている場合
+      if (clients.openWindow) {
+        return clients.openWindow(targetUrl);
+      }
+    })
+  );
+});
+
+
+importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js');
+
 importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js');
 
@@ -28,36 +89,3 @@ messaging.onBackgroundMessage((payload) => {
   // これにより、Firebaseの自動通知機能だけが働くようになり、2重送信を100%防止します。
 });
 
-self.addEventListener('notificationclick', function(event) {
-  // 1. 通知のクローズ
-  event.notification.close();
-
-  // 2. URLの抽出
-  const notificationData = event.notification.data || {};
-  // Firebaseのペイロード構造を網羅的に確認し、パラメータ付きURLを安全に抽出
-  const targetUrl = notificationData.url || 
-                    notificationData.link || 
-                    (notificationData.FCM_MSG && notificationData.FCM_MSG.notification ? notificationData.FCM_MSG.notification.click_action : '/');
-
-  // 3 & 4. 既存ウィンドウの検索・リロード、または新規ウィンドウの展開
-  event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clientList) {
-      for (let i = 0; i < clientList.length; i++) {
-        const client = clientList[i];
-        // 既存のウィンドウが存在する場合
-        if (client.url && 'focus' in client) {
-          return client.focus().then(function(focusedClient) {
-            if (focusedClient && 'navigate' in focusedClient) {
-              // 抽出したURLを用いて強制的に画面遷移（パラメータ再読み込み）
-              return focusedClient.navigate(targetUrl);
-            }
-          });
-        }
-      }
-      // 既存のウィンドウが存在しない（タスクキル状態）場合
-      if (clients.openWindow) {
-        return clients.openWindow(targetUrl);
-      }
-    })
-  );
-});
