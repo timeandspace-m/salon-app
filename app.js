@@ -221,15 +221,21 @@ if (form) {
     cancelBtn.disabled = true;
     submitBtn.innerText = "通信中...";
 
+    let debugStep = "開始";
+
     try {
+      debugStep = "1 通知許可";
       const permission = await Notification.requestPermission();
       if (permission !== 'granted') {
         alert("通知がブロックされています。スマホの設定で通知を許可してください。");
         throw new Error("Permission Denied");
       }
 
+      debugStep = "2 Service Worker登録";
       const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+      debugStep = "3 Service Worker ready";
       await navigator.serviceWorker.ready;
+      debugStep = "4 FCMトークン取得";
       const currentToken = await getToken(messaging, {
         vapidKey: APP_CONFIG.VAPID_KEY,
         serviceWorkerRegistration: registration
@@ -252,6 +258,7 @@ if (form) {
         token: currentToken
       };
 
+      debugStep = "5 GASへ登録送信";
       const response = await fetch(GAS_WEB_APP_URL, {
         method: "POST",
         cache: "no-store",
@@ -259,8 +266,10 @@ if (form) {
         body: JSON.stringify(formData)
       });
       
+      debugStep = "6 GAS応答のJSON解析";
       const result = await response.json();
       
+      debugStep = "7 登録成功後の画面処理";
       if (response.ok && result.status === "success") {
         alert("ご登録が完了しました！");
         document.getElementById('registration-form').reset();
@@ -272,7 +281,12 @@ if (form) {
     } catch (error) {
       console.error("送信エラー:", error);
       if (error.message !== "Permission Denied" && error.message !== "Token Error") {
-        alert("登録送信中にエラーが発生しました。\n詳細: " + error.message);
+        alert(
+        "登録送信中にエラーが発生しました。" +
+        "\n段階: " + debugStep +
+        "\n種類: " + error.name +
+        "\n詳細: " + error.message
+);
       }
     } finally {
       submitBtn.disabled = false;
@@ -303,9 +317,17 @@ document.addEventListener('DOMContentLoaded', () => {
 async function loadNextReservation() {
   const reservationText = document.getElementById('next-reservation');
   if (!reservationText) return;
+
+  // 原因調査用：予約読み込みがどの段階で止まったかを記録
+  let debugStep = "開始";
   
   try {
+    debugStep = "1 Service Worker ready";
+
     const registration = await navigator.serviceWorker.ready;
+
+    debugStep = "2 FCMトークン取得";
+
     const token = await getToken(messaging, { 
       vapidKey: APP_CONFIG.VAPID_KEY, 
       serviceWorkerRegistration: registration 
@@ -316,13 +338,23 @@ async function loadNextReservation() {
       return;
     }
 
-    const gasUrl = APP_CONFIG.GAS_WEB_APP_URL + "?token=" + encodeURIComponent(token);
+    const gasUrl =
+      APP_CONFIG.GAS_WEB_APP_URL +
+      "?token=" +
+      encodeURIComponent(token);
     
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-    const response = await fetch(gasUrl, { signal: controller.signal });
+    debugStep = "3 GASへ予約照会";
+
+    const response = await fetch(gasUrl, {
+      signal: controller.signal
+    });
+
     clearTimeout(timeoutId);
+
+    debugStep = "4 GAS応答のJSON解析";
 
     const result = await response.json();
 
@@ -331,15 +363,27 @@ async function loadNextReservation() {
     } else {
       reservationText.textContent = "確認できませんでした";
     }
+
   } catch (error) {
     console.error("予約取得エラー:", error);
-    reservationText.textContent = error.name === 'AbortError' ? "通信タイムアウト" : "通信エラー";
+
+    reservationText.textContent =
+      (error.name === 'AbortError'
+        ? "通信タイムアウト"
+        : "通信エラー") +
+      " [" + debugStep + "]" +
+      " " + error.name;
     
     // エラー時にDOM操作で安全にリロードボタンを生成・追加
     const reloadBtn = document.createElement('div');
     reloadBtn.innerHTML = '<span>🔄 再読み込み</span>';
-    reloadBtn.style.cssText = 'font-size: 13px; color: #3498db; text-decoration: underline; cursor: pointer; margin-top: 8px;';
-    reloadBtn.addEventListener('click', () => window.location.reload());
+    reloadBtn.style.cssText =
+      'font-size: 13px; color: #3498db; text-decoration: underline; cursor: pointer; margin-top: 8px;';
+
+    reloadBtn.addEventListener('click', () => {
+      window.location.reload();
+    });
+
     reservationText.appendChild(reloadBtn);
   }
 }
